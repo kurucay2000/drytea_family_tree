@@ -147,65 +147,123 @@ class FamilyTree:
                     print(f"  {rel['relationship_type']}: {related_name}")
 
 
-# Example usage
-def create_family_tree():
-    # Create a family tree
-    family = FamilyTree()
+def load_member_data_from_json(family_tree, members_file):
+    """
+    Load member data from a JSON file into an existing FamilyTree instance.
 
-    # Add some family members with the new metadata structure
-    grandpa_id = family.add_member(
-        name="Ben Roberson",
-        age=65,
-        gender="Male",
-        location="New York",
-        occupation="Retired Doctor",
-        aspiration="Travel the world",
-        extra_information="Loves gardening",
-    )
+    :param family_tree: FamilyTree instance to load data into
+    :param members_file: Path to JSON file containing family member data
+    :raises FileNotFoundError: If members file is not found
+    :raises ValueError: If JSON format is invalid or data structure is incorrect
+    """
+    import json
 
-    grandma_id = family.add_member(
-        name="Brooke Roberson",
-        age=63,
-        gender="Female",
-        location="New York",
-        occupation="Retired Teacher",
-        aspiration="Write a book",
-        extra_information="Expert baker",
-    )
+    try:
+        with open(members_file, "r") as f:
+            members_data = json.load(f)
 
-    dad_id = family.add_member(
-        name="Robert Smith",
-        age=42,
-        gender="Male",
-        location="Boston",
-        occupation="Software Engineer",
-        aspiration="Start a company",
-    )
+        # Validate members data structure
+        if not isinstance(members_data, list):
+            raise ValueError("Members JSON file must contain a list of members")
 
-    mom_id = family.add_member(
-        name="Sarah Smith",
-        age=40,
-        gender="Female",
-        location="Boston",
-        occupation="Doctor",
-        aspiration="Open a clinic",
-    )
+        # Add each member to the tree
+        for member_data in members_data:
+            try:
+                family_tree.add_member(
+                    name=member_data.get("name"),
+                    age=member_data.get("age"),
+                    gender=member_data.get("gender"),
+                    location=member_data.get("location"),
+                    occupation=member_data.get("occupation"),
+                    aspiration=member_data.get("aspiration"),
+                    cause_of_death=member_data.get("cause_of_death"),
+                    extra_information=member_data.get("extra_information"),
+                )
+            except ValueError as e:
+                print(f"Warning: Skipping invalid member data: {str(e)}")
+                continue
 
-    child1_id = family.add_member(
-        name="Emma Smith",
-        age=18,
-        gender="Female",
-        location="Boston",
-        occupation="Student",
-        aspiration="Become an artist",
-    )
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Members file not found: {members_file}")
+    except json.JSONDecodeError:
+        raise ValueError(f"Invalid JSON format in members file: {members_file}")
 
-    # Add relationships
-    family.add_relationship(grandpa_id, grandma_id, "spouse")
-    family.add_relationship(grandpa_id, dad_id, "parent")
-    family.add_relationship(grandma_id, dad_id, "parent")
-    family.add_relationship(dad_id, mom_id, "spouse")
-    family.add_relationship(dad_id, child1_id, "parent")
-    family.add_relationship(mom_id, child1_id, "parent")
 
-    return family
+def load_relationship_data_from_json(family_tree, relationships_file):
+    """
+    Load relationship data from a JSON file into an existing FamilyTree instance.
+    Supports using names instead of IDs to specify relationships.
+
+    :param family_tree: FamilyTree instance to load data into
+    :param relationships_file: Path to JSON file containing relationship data
+    :raises FileNotFoundError: If relationships file is not found
+    :raises ValueError: If JSON format is invalid or data structure is incorrect
+    """
+    import json
+
+    def find_member_id_by_name(name):
+        """Helper function to find a member's ID by their name"""
+        for member_id, member in family_tree.members.items():
+            if member.get("name") == name:
+                return member_id
+        raise ValueError(f"Member with name '{name}' not found")
+
+    try:
+        with open(relationships_file, "r") as f:
+            relationships_data = json.load(f)
+
+        # Validate relationships data structure
+        if not isinstance(relationships_data, list):
+            raise ValueError(
+                "Relationships JSON file must contain a list of relationships"
+            )
+
+        # Add each relationship to the tree
+        for rel_data in relationships_data:
+            try:
+                person1_name = rel_data.get("person1")
+                person2_name = rel_data.get("person2")
+                relationship_type = rel_data.get("relationship")
+
+                if not all([person1_name, person2_name, relationship_type]):
+                    raise ValueError("Missing required relationship data")
+
+                # Convert names to IDs
+                try:
+                    person1_id = find_member_id_by_name(person1_name)
+                    person2_id = find_member_id_by_name(person2_name)
+                except ValueError as e:
+                    print(f"Warning: Skipping relationship - {str(e)}")
+                    continue
+
+                family_tree.add_relationship(person1_id, person2_id, relationship_type)
+            except (ValueError, KeyError) as e:
+                print(f"Warning: Skipping invalid relationship data: {str(e)}")
+                continue
+
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Relationships file not found: {relationships_file}")
+    except json.JSONDecodeError:
+        raise ValueError(
+            f"Invalid JSON format in relationships file: {relationships_file}"
+        )
+
+
+def create_family_tree(members_file, relationships_file):
+    """
+    Create a new family tree and load data from JSON files.
+
+    :param members_file: Path to JSON file containing family member data
+    :param relationships_file: Path to JSON file containing relationship data
+    :return: FamilyTree instance with loaded data
+    """
+    # Create new family tree
+    family_tree = FamilyTree()
+
+    # Load member data
+    load_member_data_from_json(family_tree, members_file)
+
+    # Load relationship data
+    load_relationship_data_from_json(family_tree, relationships_file)
+
+    return family_tree

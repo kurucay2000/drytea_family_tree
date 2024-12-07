@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Ben Robertson",
+        "age": 65,
+        "gender": "Male",
+        "location": "New York",
+        "occupation": "Retired Doctor",
+        "aspiration": "Travel the world",
+        "extra_information": "Loves gardening"
+    },
+    {
+        "name": "Brooke Robertson",
+        "age": 63,
+        "gender": "Female",
+        "location": "New York",
+        "occupation": "Retired Teacher",
+        "aspiration": "Write a book",
+        "extra_information": "Expert baker"
+    },
+    {
+        "name": "Robert Smith",
+        "age": 42,
+        "gender": "Male",
+        "location": "Boston",
+        "occupation": "Software Engineer",
+        "aspiration": "Start a company"
+    }
+]

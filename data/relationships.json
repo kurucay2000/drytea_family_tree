@@ -1,0 +1,22 @@
+[
+    {
+        "person1": "Ben Robertson",
+        "person2": "Brooke Robertson",
+        "relationship": "spouse"
+    },
+    {
+        "person1": "Ben Robertson",
+        "person2": "Robert Smith",
+        "relationship": "parent"
+    },
+    {
+        "person1": "Brooke Robertson",
+        "person2": "Robert Smith",
+        "relationship": "parent"
+    },
+    {
+        "person1": "Brooke Robertson",
+        "person2": "Ben Robertson",
+        "relationship": "spouse"
+    }
+]
