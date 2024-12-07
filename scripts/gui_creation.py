@@ -141,7 +141,7 @@ class FamilyTreeUI:
 
             if value:
                 try:
-                    if field_type == int and value:
+                    if field_type is int and value:
                         # Convert to float first to handle decimal inputs, then to int
                         value = int(float(value))
                         if value < 0:
@@ -159,7 +159,7 @@ class FamilyTreeUI:
 
         # Add member to family tree
         try:
-            member_id = self.family_tree.add_member(**values)
+            self.family_tree.add_member(**values)
             self._populate_member_list()
             messagebox.showinfo(
                 "Success",
