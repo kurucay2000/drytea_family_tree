@@ -89,6 +89,9 @@ class FamilyTreeUI:
             side=tk.LEFT, padx=5
         )
         ttk.Button(
+            buttons_frame, text="Remove Member", command=self._remove_member
+        ).pack(side=tk.LEFT, padx=5)
+        ttk.Button(
             buttons_frame, text="Add Relationship", command=self._add_relationship
         ).pack(side=tk.LEFT, padx=5)
         ttk.Button(buttons_frame, text="Save Tree", command=self._save_tree).pack(
@@ -97,6 +100,98 @@ class FamilyTreeUI:
         ttk.Button(buttons_frame, text="Load Tree", command=self._load_tree).pack(
             side=tk.LEFT, padx=5
         )
+
+    def _remove_member(self):
+        """Remove selected member and their relationships"""
+        selections = self.member_listbox.curselection()
+        if not selections:
+            messagebox.showwarning("Warning", "Please select a member to remove")
+            return
+
+        selection = self.member_listbox.get(selections[0])
+        member_id = int(selection.split("(ID: ")[1].strip(")"))
+        member = self.family_tree.get_member(member_id)
+
+        # Confirm deletion
+        if not messagebox.askyesno(
+            "Confirm Deletion",
+            f"Are you sure you want to remove {member.get('name', f'Member {member_id}')}?\n"
+            "This will also remove all relationships involving this member.",
+        ):
+            return
+
+        # Remove member from the tree
+        del self.family_tree.members[member_id]
+
+        # Remove all relationships involving this member
+        # First, remove relationships where this member is person1
+        if member_id in self.family_tree.relationships:
+            del self.family_tree.relationships[member_id]
+
+        # Then, remove relationships where this member is person2
+        for person_id in list(self.family_tree.relationships.keys()):
+            self.family_tree.relationships[person_id] = [
+                rel
+                for rel in self.family_tree.relationships[person_id]
+                if rel["person_id"] != member_id
+            ]
+            # Remove empty relationship lists
+            if not self.family_tree.relationships[person_id]:
+                del self.family_tree.relationships[person_id]
+
+        # Update JSON files
+        self._save_to_json()
+
+        # Refresh the UI
+        self._populate_member_list()
+
+        # Clear detail fields
+        for var in self.detail_vars.values():
+            var.set("")
+
+        # Clear relationships list
+        self.relationships_listbox.delete(0, tk.END)
+
+        messagebox.showinfo(
+            "Success",
+            f"Removed {member.get('name', f'Member {member_id}')} and their relationships",
+        )
+
+    def _save_to_json(self):
+        """Save current tree state to JSON files"""
+        try:
+            # Save members to members.json
+            members_data = []
+            for member in self.family_tree.members.values():
+                member_data = {
+                    key: value
+                    for key, value in member.items()
+                    if key != "id" and value is not None
+                }
+                members_data.append(member_data)
+
+            with open("./data/members.json", "w") as f:
+                json.dump(members_data, f, indent=4)
+
+            # Save relationships to relationships.json
+            relationships_data = []
+            for person1_id, rels in self.family_tree.relationships.items():
+                person1 = self.family_tree.members[person1_id]
+                for rel in rels:
+                    person2 = self.family_tree.members[rel["person_id"]]
+                    relationships_data.append(
+                        {
+                            "person1": person1["name"],
+                            "person2": person2["name"],
+                            "relationship": rel["relationship_type"],
+                        }
+                    )
+
+            with open("./data/relationships.json", "w") as f:
+                json.dump(relationships_data, f, indent=4)
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save to JSON files: {str(e)}")
 
     def _add_member(self):
         """Open dialog to add a new family member"""
@@ -142,7 +237,6 @@ class FamilyTreeUI:
             if value:
                 try:
                     if field_type is int and value:
-                        # Convert to float first to handle decimal inputs, then to int
                         value = int(float(value))
                         if value < 0:
                             raise ValueError("Age cannot be negative")
@@ -160,6 +254,7 @@ class FamilyTreeUI:
         # Add member to family tree
         try:
             self.family_tree.add_member(**values)
+            self._save_to_json()  # Save to JSON after adding member
             self._populate_member_list()
             messagebox.showinfo(
                 "Success",
@@ -201,6 +296,7 @@ class FamilyTreeUI:
             self.family_tree.add_relationship(
                 first_member["id"], second_member["id"], relationship_type
             )
+            self._save_to_json()  # Save to JSON after adding relationship
 
             messagebox.showinfo(
                 "Success",
