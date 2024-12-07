@@ -1,28 +1,35 @@
 [
     {
+        "id": 1,
         "name": "Ben Robertson",
         "age": 65,
         "gender": "Male",
         "location": "New York",
         "occupation": "Retired Doctor",
         "aspiration": "Travel the world",
+        "cause_of_death": null,
         "extra_information": "Loves gardening"
     },
     {
+        "id": 2,
         "name": "Brooke Robertson",
         "age": 63,
         "gender": "Female",
         "location": "New York",
         "occupation": "Retired Teacher",
         "aspiration": "Write a book",
+        "cause_of_death": null,
         "extra_information": "Expert baker"
     },
     {
+        "id": 3,
         "name": "Robert Smith",
         "age": 42,
         "gender": "Male",
         "location": "Boston",
         "occupation": "Software Engineer",
-        "aspiration": "Start a company"
+        "aspiration": "Start a company",
+        "cause_of_death": null,
+        "extra_information": null
     }
 ]

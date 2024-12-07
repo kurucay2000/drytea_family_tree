@@ -3,6 +3,161 @@ from tkinter import ttk, messagebox, simpledialog
 import json
 
 
+class AddMemberDialog:
+    def __init__(self, parent, family_tree, callback):
+        # Create dialog window
+        self.dialog = tk.Toplevel(parent)
+        self.dialog.title("Add New Family Member")
+        self.dialog.geometry("500x700")
+
+        # Store references
+        self.family_tree = family_tree
+        self.callback = callback
+
+        # Make dialog modal
+        self.dialog.transient(parent)
+        self.dialog.grab_set()
+
+        # Create main frame
+        main_frame = ttk.Frame(self.dialog, padding="10")
+        main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Add title
+        ttk.Label(
+            main_frame, text="Add New Family Member", font=("Arial", 12, "bold")
+        ).pack(pady=(0, 10))
+
+        # Create details frame
+        details_frame = ttk.LabelFrame(main_frame, text="Member Details")
+        details_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        # Create and store detail variables
+        self.detail_vars = {
+            "name": tk.StringVar(),
+            "age": tk.StringVar(),
+            "gender": tk.StringVar(),
+            "location": tk.StringVar(),
+            "occupation": tk.StringVar(),
+            "aspiration": tk.StringVar(),
+            "cause_of_death": tk.StringVar(),
+        }
+
+        # Regular fields
+        regular_fields = [
+            ("Name:", "name"),
+            ("Age:", "age"),
+            ("Gender:", "gender"),
+            ("Location:", "location"),
+            ("Occupation:", "occupation"),
+            ("Aspiration:", "aspiration"),
+            ("Cause of Death:", "cause_of_death"),
+        ]
+
+        # Create entry fields
+        self.detail_entries = {}
+
+        for i, (label_text, var_key) in enumerate(regular_fields):
+            ttk.Label(details_frame, text=label_text).grid(
+                row=i, column=0, sticky="w", padx=5, pady=2
+            )
+
+            if var_key == "gender":
+                # Create a combobox for gender selection
+                self.detail_entries[var_key] = ttk.Combobox(
+                    details_frame,
+                    textvariable=self.detail_vars[var_key],
+                    values=["Male", "Female", "Alien", "Other"],
+                )
+            else:
+                # Create regular entry fields for other details
+                self.detail_entries[var_key] = ttk.Entry(
+                    details_frame, textvariable=self.detail_vars[var_key]
+                )
+
+            self.detail_entries[var_key].grid(
+                row=i, column=1, sticky="ew", padx=5, pady=2
+            )
+
+        # Extra Information Text Area
+        ttk.Label(details_frame, text="Extra Information:").grid(
+            row=len(regular_fields), column=0, sticky="nw", padx=5, pady=2
+        )
+
+        # Create text frame for extra information
+        text_frame = ttk.Frame(details_frame)
+        text_frame.grid(
+            row=len(regular_fields), column=1, sticky="nsew", padx=5, pady=2
+        )
+
+        self.extra_info_text = tk.Text(text_frame, wrap=tk.WORD, height=8, width=40)
+        scrollbar = ttk.Scrollbar(
+            text_frame, orient="vertical", command=self.extra_info_text.yview
+        )
+
+        self.extra_info_text.configure(yscrollcommand=scrollbar.set)
+        self.extra_info_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Configure grid weights for details frame
+        details_frame.grid_columnconfigure(1, weight=1)
+
+        # Buttons frame
+        button_frame = ttk.Frame(main_frame)
+        button_frame.pack(fill=tk.X, pady=(10, 0))
+
+        ttk.Button(button_frame, text="Cancel", command=self.dialog.destroy).pack(
+            side=tk.RIGHT, padx=5
+        )
+        ttk.Button(button_frame, text="Add Member", command=self._add_member).pack(
+            side=tk.RIGHT, padx=5
+        )
+
+    def _add_member(self):
+        """Process the form data and add the member"""
+        values = {}
+
+        # Get values from entry fields
+        for field_name, var in self.detail_vars.items():
+            value = var.get().strip()
+            if value:  # Only include non-empty values
+                if field_name == "age":
+                    try:
+                        value = int(float(value))
+                        if value < 0:
+                            messagebox.showerror("Error", "Age cannot be negative")
+                            return
+                    except ValueError:
+                        messagebox.showerror("Error", "Age must be a valid number")
+                        return
+                values[field_name] = value
+
+        # Get extra information
+        extra_info = self.extra_info_text.get("1.0", tk.END).strip()
+        if extra_info:
+            values["extra_information"] = extra_info
+
+        try:
+            # Add member to family tree
+            self.family_tree.add_member(**values)
+
+            # Update members.json
+            members_data = [member for member in self.family_tree.members.values()]
+            with open("./data/members.json", "w") as f:
+                json.dump(members_data, f, indent=4)
+
+            # Call callback to refresh member list
+            self.callback()
+
+            messagebox.showinfo(
+                "Success",
+                f"Added {values.get('name', 'new member')} to the family tree!",
+            )
+            self.dialog.destroy()
+
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+
+
 class FamilyTreeUI:
     def __init__(self, family_tree):
         """Initialize the Family Tree GUI"""
@@ -89,7 +244,10 @@ class FamilyTreeUI:
                 row=i, column=1, sticky="ew", padx=5, pady=2
             )
 
-        # [Previous code remains the same until the text area creation]
+        # Extra Information Text Area
+        ttk.Label(details_frame, text="Extra Information:").grid(
+            row=len(regular_fields), column=0, sticky="nw", padx=5, pady=2
+        )
 
         # Create a frame for the text area and scrollbar
         text_frame = ttk.Frame(details_frame)
@@ -137,12 +295,9 @@ class FamilyTreeUI:
         ttk.Button(
             buttons_frame, text="Add Relationship", command=self._add_relationship
         ).pack(side=tk.LEFT, padx=5)
-        ttk.Button(buttons_frame, text="Save Tree", command=self._save_tree).pack(
-            side=tk.LEFT, padx=5
-        )
-        ttk.Button(buttons_frame, text="Load Tree", command=self._load_tree).pack(
-            side=tk.LEFT, padx=5
-        )
+        ttk.Button(
+            buttons_frame, text="Remove Member", command=self._remove_member
+        ).pack(side=tk.LEFT, padx=5)
 
         # Store currently selected member ID
         self.current_member_id = None
@@ -229,12 +384,104 @@ class FamilyTreeUI:
                 member = self.family_tree.members[self.current_member_id]
                 member.update(updated_values)
 
+                # Update members.json
+                members_data = [member for member in self.family_tree.members.values()]
+                with open("./data/members.json", "w") as f:
+                    json.dump(members_data, f, indent=4)
+
                 # Refresh the member list to show any name changes
                 self._populate_member_list()
                 messagebox.showinfo("Success", "Member details updated successfully!")
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to update member details: {str(e)}")
+
+    def _remove_member(self):
+        """Remove the currently selected member from the family tree and update JSON files"""
+        if not self.current_member_id:
+            messagebox.showinfo("No Selection", "Please select a member to remove.")
+            return
+
+        member = self.family_tree.get_member(self.current_member_id)
+        member_name = member.get("name", f"Member {self.current_member_id}")
+
+        # Confirm deletion
+        if not messagebox.askyesno(
+            "Confirm Deletion",
+            f"Are you sure you want to remove {member_name} from the family tree?\n\n"
+            "This will also remove all relationships associated with this member and update the saved files.",
+        ):
+            return
+
+        try:
+            # Remove all relationships involving this member
+            # First, remove relationships where this member is person1
+            if self.current_member_id in self.family_tree.relationships:
+                del self.family_tree.relationships[self.current_member_id]
+
+            # Then remove relationships where this member is person2
+            for member_id, relationships in list(
+                self.family_tree.relationships.items()
+            ):
+                self.family_tree.relationships[member_id] = [
+                    rel
+                    for rel in relationships
+                    if rel["person_id"] != self.current_member_id
+                ]
+                # Remove empty relationship lists
+                if not self.family_tree.relationships[member_id]:
+                    del self.family_tree.relationships[member_id]
+
+            # Remove the member
+            del self.family_tree.members[self.current_member_id]
+
+            # Update members.json
+            members_data = [member for member in self.family_tree.members.values()]
+            with open("./data/members.json", "w") as f:
+                json.dump(members_data, f, indent=4)
+
+            # Update relationships.json
+            relationships_data = []
+            for person1_id, rels in self.family_tree.relationships.items():
+                person1 = self.family_tree.members[person1_id].get(
+                    "name", f"Member {person1_id}"
+                )
+                for rel in rels:
+                    person2_id = rel["person_id"]
+                    person2 = self.family_tree.members[person2_id].get(
+                        "name", f"Member {person2_id}"
+                    )
+                    relationships_data.append(
+                        {
+                            "person1": person1,
+                            "person2": person2,
+                            "relationship": rel["relationship_type"],
+                        }
+                    )
+
+            with open("./data/relationships.json", "w") as f:
+                json.dump(relationships_data, f, indent=4)
+
+            # Clear the details panel
+            for var in self.detail_vars.values():
+                var.set("")
+            self.extra_info_text.delete("1.0", tk.END)
+            self.relationships_listbox.delete(0, tk.END)
+            self.save_changes_btn.grid_remove()
+
+            # Reset current member ID
+            self.current_member_id = None
+
+            # Refresh the member list
+            self._populate_member_list()
+
+            messagebox.showinfo(
+                "Success",
+                f"{member_name} has been removed from the family tree and files have been updated.",
+            )
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to remove member: {str(e)}")
 
     def _on_member_select(self, event):
         """Handle member selection in the listbox"""
@@ -284,74 +531,10 @@ class FamilyTreeUI:
         if current_selection:
             self.member_listbox.selection_set(current_selection)
 
+    # Replace the existing _add_member method in FamilyTreeUI with this:
     def _add_member(self):
         """Open dialog to add a new family member"""
-        fields = [
-            ("Name", str, None),
-            ("Age", int, None),
-            ("Gender", str, ["Male", "Female", "Alien", "Other"]),
-            ("Location", str, None),
-            ("Occupation", str, None),
-            ("Aspiration", str, None),
-            ("Cause of Death", str, None),
-            ("Extra Information", str, None),
-        ]
-
-        values = {}
-        for field_name, field_type, options in fields:
-            if options:
-                # Create a selection dialog for fields with options
-                dialog = tk.Toplevel(self.root)
-                dialog.title(f"Select {field_name}")
-                dialog.geometry("200x200")
-
-                selected_value = [None]
-
-                for option in options:
-
-                    def make_command(opt):
-                        return lambda: (
-                            selected_value.__setitem__(0, opt),
-                            dialog.destroy(),
-                        )
-
-                    ttk.Button(dialog, text=option, command=make_command(option)).pack(
-                        pady=5
-                    )
-
-                dialog.wait_window()
-                value = selected_value[0]
-            else:
-                # Use simple dialog for other fields
-                value = simpledialog.askstring("Add Member", f"Enter {field_name}:")
-
-            if value:
-                try:
-                    if field_type is int and value:
-                        value = int(float(value))
-                        if value < 0:
-                            raise ValueError("Age cannot be negative")
-                    values[field_name.lower().replace(" ", "_")] = field_type(value)
-                except ValueError as e:
-                    if str(e) == "Age cannot be negative":
-                        messagebox.showerror("Error", "Age cannot be negative")
-                    else:
-                        messagebox.showerror(
-                            "Error",
-                            f"Invalid value for {field_name}. Must be a whole number.",
-                        )
-                    return
-
-        # Add member to family tree
-        try:
-            self.family_tree.add_member(**values)
-            self._populate_member_list()
-            messagebox.showinfo(
-                "Success",
-                f"Added {values.get('name', 'new member')} to the family tree!",
-            )
-        except Exception as e:
-            messagebox.showerror("Error", str(e))
+        AddMemberDialog(self.root, self.family_tree, self._populate_member_list)
 
     def _add_relationship(self):
         """Open dialog to add a relationship between two members"""
@@ -386,6 +569,28 @@ class FamilyTreeUI:
             self.family_tree.add_relationship(
                 first_member["id"], second_member["id"], relationship_type
             )
+
+            # Update relationships.json
+            relationships_data = []
+            for person1_id, rels in self.family_tree.relationships.items():
+                person1 = self.family_tree.members[person1_id].get(
+                    "name", f"Member {person1_id}"
+                )
+                for rel in rels:
+                    person2_id = rel["person_id"]
+                    person2 = self.family_tree.members[person2_id].get(
+                        "name", f"Member {person2_id}"
+                    )
+                    relationships_data.append(
+                        {
+                            "person1": person1,
+                            "person2": person2,
+                            "relationship": rel["relationship_type"],
+                        }
+                    )
+
+            with open("./data/relationships.json", "w") as f:
+                json.dump(relationships_data, f, indent=4)
 
             messagebox.showinfo(
                 "Success",
@@ -431,52 +636,6 @@ class FamilyTreeUI:
         select_dialog.wait_window()
         return selected_member[0]
 
-    def _save_tree(self):
-        """Save the family tree to a JSON file"""
-        save_data = {
-            "members": self.family_tree.members,
-            "relationships": self.family_tree.relationships,
-        }
-
-        from tkinter import filedialog
-
-        filename = filedialog.asksaveasfilename(
-            defaultextension=".json",
-            filetypes=[("JSON files", "*.json"), ("All files", "*.*")],
-        )
-
-        if filename:
-            try:
-                with open(filename, "w") as f:
-                    json.dump(save_data, f, indent=4)
-                messagebox.showinfo("Success", f"Family tree saved to {filename}")
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to save family tree: {str(e)}")
-
-    def _load_tree(self):
-        """Load a family tree from a JSON file"""
-        from tkinter import filedialog
-
-        filename = filedialog.askopenfilename(
-            filetypes=[("JSON files", "*.json"), ("All files", "*.*")]
-        )
-
-        if filename:
-            try:
-                with open(filename, "r") as f:
-                    load_data = json.load(f)
-
-                # Clear existing tree
-                self.family_tree.members = load_data["members"]
-                self.family_tree.relationships = load_data["relationships"]
-
-                # Refresh UI
-                self._populate_member_list()
-                messagebox.showinfo("Success", f"Family tree loaded from {filename}")
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to load family tree: {str(e)}")
-
-    # Method to control scrollbar visibility
     def _on_scroll(self, *args):
         """Control scrollbar visibility based on content"""
         # Check if there's enough content to scroll
