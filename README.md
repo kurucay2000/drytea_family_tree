@@ -1,6 +1,6 @@
 # Sims Family Tree Builder
 
-A Python application for creating and visualizing family trees inspired by The Sims! Track relationships, add family members, and visualize complex family dynamics just like you would in the game.
+A Python application for creating and visualizing family trees - specifically for the Sims! Track relationships, add family members, and visualize complex family dynamics just like you would in the game.
 
 ## Features
 
