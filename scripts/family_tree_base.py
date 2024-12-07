@@ -159,9 +159,8 @@ def create_family_tree():
     family.add_relationship(mom_id, child2_id, "parent")
     
     family.add_relationship(child1_id, child2_id, "sibling")
-    
-    # Print the entire family tree
-    family.print_family_tree()
+
+    return family
 
 if __name__ == "__main__":
     create_family_tree()
