@@ -83,6 +83,7 @@ class FamilyTreeUI:
         # Buttons Frame
         buttons_frame = ttk.Frame(right_frame)
         buttons_frame.pack(fill=tk.X, pady=5)
+        self.buttons_frame = buttons_frame  # Store reference to the frame
         
         # Add Member Button
         ttk.Button(buttons_frame, text="Add Member", command=self._add_member).pack(side=tk.LEFT, padx=5)

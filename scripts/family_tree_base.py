@@ -106,15 +106,15 @@ def create_family_tree():
     
     # Add some family members
     grandpa_id = family.add_member(
-        name="John Smith", 
-        birth_date="1940-05-15", 
+        name="Ben Roberson", 
+        birth_date="1990-01-01", 
         gender="male", 
-        additional_info={"occupation": "Retired Teacher"}
+        additional_info={"occupation": "Doctor"}
     )
     
     grandma_id = family.add_member(
-        name="Mary Smith", 
-        birth_date="1942-08-20", 
+        name="Brooke Roberson", 
+        birth_date="1990-02-01", 
         gender="female", 
         additional_info={"occupation": "Homemaker"}
     )
