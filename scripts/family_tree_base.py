@@ -8,26 +8,54 @@ class FamilyTree:
         self.members = {}
         self.relationships = {}
 
-    def add_member(self, name, birth_date, gender, additional_info=None):
+    def add_member(self, name=None, age=None, gender=None, location=None, 
+                  occupation=None, aspiration=None, cause_of_death=None, 
+                  extra_information=None):
         """
         Add a new member to the family tree.
         
-        :param name: Full name of the person
-        :param birth_date: Date of birth (string)
-        :param gender: Gender of the person
-        :param additional_info: Optional dictionary of extra details
+        :param name: Full name of the person (optional)
+        :param age: Age of the person as integer (optional)
+        :param gender: Gender of the person (one of "Male", "Female", "Alien", "Other") (optional)
+        :param location: Location of the person (optional)
+        :param occupation: Occupation of the person (optional)
+        :param aspiration: Life aspiration of the person (optional)
+        :param cause_of_death: Cause of death if applicable (optional)
+        :param extra_information: Any additional information (optional)
         :return: Unique identifier for the new member
         """
-        # Generate a unique identifier (you could use a more sophisticated method)
+        # Generate a unique identifier
         member_id = len(self.members) + 1
+        
+        # Validate and convert gender to title case if provided
+        valid_genders = ["Male", "Female", "Alien", "Other"]
+        if gender:
+            gender = gender.title()
+            if gender not in valid_genders:
+                raise ValueError(f"Gender must be one of: {', '.join(valid_genders)}")
+        
+        # Convert age to integer if provided
+        if age is not None:
+            try:
+                age = int(float(age))  # Handle both string and float inputs
+                if age < 0:
+                    raise ValueError("Age cannot be negative")
+            except ValueError as e:
+                if str(e) == "Age cannot be negative":
+                    raise
+                raise ValueError("Age must be a valid integer")
         
         # Create member dictionary
         member = {
             'id': member_id,
             'name': name,
-            'birth_date': birth_date,
+            'age': age,
             'gender': gender,
-            'additional_info': additional_info or {}
+            'location': location,
+            'occupation': occupation,
+            'aspiration': aspiration,
+            'cause_of_death': cause_of_death,
+            'extra_information': extra_information
         }
         
         # Store the member
@@ -81,15 +109,22 @@ class FamilyTree:
         print("Family Tree:")
         for member_id, member in self.members.items():
             print(f"\nMember ID {member_id}:")
-            print(f"Name: {member['name']}")
-            print(f"Birth Date: {member['birth_date']}")
-            print(f"Gender: {member['gender']}")
             
-            # Print additional info if exists
-            if member['additional_info']:
-                print("Additional Information:")
-                for key, value in member['additional_info'].items():
-                    print(f"  {key}: {value}")
+            # Print member details
+            fields = [
+                ('Name', 'name'),
+                ('Age', 'age'),
+                ('Gender', 'gender'),
+                ('Location', 'location'),
+                ('Occupation', 'occupation'),
+                ('Aspiration', 'aspiration'),
+                ('Cause of Death', 'cause_of_death'),
+                ('Extra Information', 'extra_information')
+            ]
+            
+            for label, field in fields:
+                if member[field] is not None:
+                    print(f"{label}: {member[field]}")
             
             # Print relationships
             relationships = self.get_relationships(member_id)
@@ -97,70 +132,69 @@ class FamilyTree:
                 print("Relationships:")
                 for rel in relationships:
                     related_member = self.get_member(rel['person_id'])
-                    print(f"  {rel['relationship_type']}: {related_member['name']}")
+                    related_name = related_member['name'] if related_member['name'] else f"Member {rel['person_id']}"
+                    print(f"  {rel['relationship_type']}: {related_name}")
+
 
 # Example usage
 def create_family_tree():
     # Create a family tree
     family = FamilyTree()
     
-    # Add some family members
+    # Add some family members with the new metadata structure
     grandpa_id = family.add_member(
-        name="Ben Roberson", 
-        birth_date="1990-01-01", 
-        gender="male", 
-        additional_info={"occupation": "Doctor"}
+        name="Ben Roberson",
+        age=65,
+        gender="Male",
+        location="New York",
+        occupation="Retired Doctor",
+        aspiration="Travel the world",
+        extra_information="Loves gardening"
     )
     
     grandma_id = family.add_member(
-        name="Brooke Roberson", 
-        birth_date="1990-02-01", 
-        gender="female", 
-        additional_info={"occupation": "Homemaker"}
+        name="Brooke Roberson",
+        age=63,
+        gender="Female",
+        location="New York",
+        occupation="Retired Teacher",
+        aspiration="Write a book",
+        extra_information="Expert baker"
     )
     
     dad_id = family.add_member(
-        name="Robert Smith", 
-        birth_date="1970-03-10", 
-        gender="male", 
-        additional_info={"job": "Software Engineer"}
+        name="Robert Smith",
+        age=42,
+        gender="Male",
+        location="Boston",
+        occupation="Software Engineer",
+        aspiration="Start a company"
     )
     
     mom_id = family.add_member(
-        name="Sarah Smith", 
-        birth_date="1972-11-25", 
-        gender="female", 
-        additional_info={"job": "Doctor"}
+        name="Sarah Smith",
+        age=40,
+        gender="Female",
+        location="Boston",
+        occupation="Doctor",
+        aspiration="Open a clinic"
     )
     
     child1_id = family.add_member(
-        name="Emma Smith", 
-        birth_date="2000-07-30", 
-        gender="female", 
-        additional_info={"education": "College Student"}
-    )
-    
-    child2_id = family.add_member(
-        name="Jack Smith", 
-        birth_date="2003-12-05", 
-        gender="male", 
-        additional_info={"education": "High School"}
+        name="Emma Smith",
+        age=18,
+        gender="Female",
+        location="Boston",
+        occupation="Student",
+        aspiration="Become an artist"
     )
     
     # Add relationships
     family.add_relationship(grandpa_id, grandma_id, "spouse")
     family.add_relationship(grandpa_id, dad_id, "parent")
     family.add_relationship(grandma_id, dad_id, "parent")
-    
     family.add_relationship(dad_id, mom_id, "spouse")
     family.add_relationship(dad_id, child1_id, "parent")
-    family.add_relationship(dad_id, child2_id, "parent")
     family.add_relationship(mom_id, child1_id, "parent")
-    family.add_relationship(mom_id, child2_id, "parent")
     
-    family.add_relationship(child1_id, child2_id, "sibling")
-
     return family
-
-if __name__ == "__main__":
-    create_family_tree()
