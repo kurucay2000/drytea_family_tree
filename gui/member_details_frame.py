@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
+from utils.validate import validate_parent
 
 
 class MemberDetailsFrame:
@@ -98,9 +99,113 @@ class MemberDetailsFrame:
         if member.get("extra_information"):
             self.extra_info_text.insert("1.0", member["extra_information"])
         self.save_changes_btn.grid()
+        self.current_member_id = member.get("id")
 
     def clear_details(self):
         for var in self.detail_vars.values():
             var.set("")
         self.extra_info_text.delete("1.0", tk.END)
         self.save_changes_btn.grid_remove()
+        self.current_member_id = None
+
+    def save_changes(self):
+        if self.current_member_id is None:
+            return
+
+        current_member = None
+        for member in self.family_tree.members.values():
+            if str(member.get("id")) == str(self.current_member_id):
+                current_member = member
+                break
+
+        if not current_member:
+            messagebox.showerror("Error", "Cannot find member to update")
+            return
+
+        updated_values = {}
+        changes_description = []
+
+        for field_name, var in self.detail_vars.items():
+            new_value = var.get().strip()
+            # Convert ID to integer
+            if field_name == "id" and new_value:
+                new_value = int(new_value)
+            old_value = (
+                str(current_member.get(field_name, ""))
+                if current_member.get(field_name) is not None
+                else ""
+            )
+
+            if new_value != old_value:
+                # Age validation
+                if field_name == "age" and new_value:
+                    try:
+                        value = int(float(new_value))
+                        if value < 0:
+                            messagebox.showerror("Error", "Age cannot be negative")
+                            return
+                    except ValueError:
+                        messagebox.showerror("Error", "Age must be a valid number")
+                        return
+
+                # Parent validation
+                if field_name in ["father", "mother"] and new_value:
+                    if not validate_parent(new_value, self.family_tree):
+                        messagebox.showerror(
+                            "Error",
+                            f"The specified {field_name} '{new_value}' does not exist in the family tree",
+                        )
+                        return
+
+                if new_value:
+                    updated_values[field_name] = new_value
+                    field_label = field_name.replace("_", " ").title()
+                    if old_value:
+                        changes_description.append(
+                            f"{field_label}: '{old_value}' → '{new_value}'"
+                        )
+                    else:
+                        changes_description.append(
+                            f"{field_label}: Added '{new_value}'"
+                        )
+
+        # Get extra information changes
+        new_extra_info = self.extra_info_text.get("1.0", tk.END).strip()
+        old_extra_info = current_member.get("extra_information", "")
+        if new_extra_info != old_extra_info:
+            updated_values["extra_information"] = new_extra_info
+            if old_extra_info:
+                changes_description.append("Extra Information has been modified")
+            else:
+                changes_description.append("Extra Information has been added")
+
+        if not changes_description:
+            messagebox.showinfo(
+                "No Changes", "No changes were made to the member details."
+            )
+            return
+
+        # Confirm changes with user
+        confirm_message = "The following changes will be made:\n\n" + "\n".join(
+            changes_description
+        )
+        if not messagebox.askyesno(
+            "Confirm Changes",
+            confirm_message + "\n\nDo you want to save these changes?",
+        ):
+            return
+
+        try:
+            # Update member
+            current_member.update(updated_values)
+
+            # Save to file
+            members_data = [member for member in self.family_tree.members.values()]
+            with open("./data/members.json", "w") as f:
+                json.dump(members_data, f, indent=4)
+
+            messagebox.showinfo("Success", "Member details updated successfully!")
+            self.save_callback()  # Refresh the UI
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to update member details: {str(e)}")

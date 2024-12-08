@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import json
+from utils.validate import validate_parent
 
 
 class AddMemberDialog:
@@ -89,7 +90,6 @@ class AddMemberDialog:
             )
 
         # Set next available ID
-        # In __init__ method, where next_id is calculated:
         current_ids = []
         for member in self.family_tree.members.values():
             member_id = member.get("id", 0)
@@ -99,7 +99,7 @@ class AddMemberDialog:
                 current_ids.append(0)
 
         next_id = max(current_ids, default=0) + 1
-        self.detail_vars["id"].set(str(next_id))  # Convert to string only for display
+        self.detail_vars["id"].set(str(next_id))
 
         # Extra Information Text Area
         ttk.Label(details_frame, text="Extra Information:").grid(
@@ -142,6 +142,9 @@ class AddMemberDialog:
         # Get values from entry fields
         for field_name, var in self.detail_vars.items():
             value = var.get().strip()
+            # Convert ID to integer
+            if field_name == "id" and value:
+                value = int(value)
             if value:  # Only include non-empty values
                 if field_name == "age":
                     try:
@@ -152,6 +155,16 @@ class AddMemberDialog:
                     except ValueError:
                         messagebox.showerror("Error", "Age must be a valid number")
                         return
+
+                # Validate parent fields
+                if field_name in ["father", "mother"]:
+                    if not validate_parent(value, self.family_tree):
+                        messagebox.showerror(
+                            "Error",
+                            f"The specified {field_name} '{value}' does not exist in the family tree",
+                        )
+                        return
+
                 values[field_name] = value
 
         # Get extra information

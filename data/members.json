@@ -84,7 +84,7 @@
         "spouses": []
     },
     {
-        "id": "7",
+        "id": 7,
         "name": "deborah",
         "age": 65,
         "gender": "Female",
@@ -98,7 +98,7 @@
         "spouses": []
     },
     {
-        "id": "8",
+        "id": 8,
         "name": "james jr",
         "age": 44,
         "gender": "Male",
