@@ -175,7 +175,7 @@ def load_member_data_from_json(family_tree, members_file):
         raise ValueError(f"Invalid JSON format in members file: {members_file}")
 
 
-def create_family_tree(members_file, relationships_file):
+def create_family_tree(members_file):
     """
     Create a new family tree and load data from JSON files.
 

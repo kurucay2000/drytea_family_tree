@@ -4,7 +4,7 @@ from gui.tree_visualizer import add_visualization_to_ui
 
 
 def main():
-    family = create_family_tree("./data/members.json", None)
+    family = create_family_tree("./data/members.json")
     app = FamilyTreeUI(family)
     add_visualization_to_ui(app)
     app.run()
