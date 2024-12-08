@@ -11,8 +11,7 @@
         "extra_information": "Loves gardening",
         "father": null,
         "mother": null,
-        "spouses": [],
-        "children": []
+        "spouses": []
     },
     {
         "id": 2,
@@ -26,8 +25,7 @@
         "extra_information": "Expert baker",
         "father": null,
         "mother": null,
-        "spouses": [],
-        "children": []
+        "spouses": []
     },
     {
         "id": 3,
@@ -41,8 +39,7 @@
         "extra_information": null,
         "father": "Ben Robertson",
         "mother": "Brooke Robertson",
-        "spouses": [],
-        "children": []
+        "spouses": []
     },
     {
         "id": 4,
@@ -56,8 +53,7 @@
         "extra_information": null,
         "father": "Robert Smith",
         "mother": "bronco",
-        "spouses": [],
-        "children": []
+        "spouses": []
     },
     {
         "id": 5,
@@ -71,7 +67,48 @@
         "extra_information": null,
         "father": null,
         "mother": null,
-        "spouses": [],
-        "children": []
+        "spouses": []
+    },
+    {
+        "id": 6,
+        "name": "james sr",
+        "age": 65,
+        "gender": "Male",
+        "location": null,
+        "occupation": null,
+        "aspiration": null,
+        "cause_of_death": null,
+        "extra_information": "",
+        "father": null,
+        "mother": null,
+        "spouses": []
+    },
+    {
+        "id": "7",
+        "name": "deborah",
+        "age": 65,
+        "gender": "Female",
+        "location": null,
+        "occupation": null,
+        "aspiration": null,
+        "cause_of_death": null,
+        "extra_information": null,
+        "father": null,
+        "mother": null,
+        "spouses": []
+    },
+    {
+        "id": "8",
+        "name": "james jr",
+        "age": 44,
+        "gender": "Male",
+        "location": null,
+        "occupation": null,
+        "aspiration": null,
+        "cause_of_death": null,
+        "extra_information": null,
+        "father": "james sr",
+        "mother": "deborah",
+        "spouses": []
     }
 ]

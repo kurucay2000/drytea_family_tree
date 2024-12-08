@@ -89,14 +89,17 @@ class AddMemberDialog:
             )
 
         # Set next available ID
-        next_id = (
-            max(
-                [member.get("id", 0) for member in self.family_tree.members.values()],
-                default=0,
-            )
-            + 1
-        )
-        self.detail_vars["id"].set(str(next_id))
+        # In __init__ method, where next_id is calculated:
+        current_ids = []
+        for member in self.family_tree.members.values():
+            member_id = member.get("id", 0)
+            try:
+                current_ids.append(int(member_id) if member_id else 0)
+            except (ValueError, TypeError):
+                current_ids.append(0)
+
+        next_id = max(current_ids, default=0) + 1
+        self.detail_vars["id"].set(str(next_id))  # Convert to string only for display
 
         # Extra Information Text Area
         ttk.Label(details_frame, text="Extra Information:").grid(
