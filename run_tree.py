@@ -5,7 +5,9 @@ from scripts.tree_visualizer import add_visualization_to_ui
 
 def main():
     # Create a family tree
-    family = create_family_tree("./data/members.json", "./data/relationships.json")
+    family = create_family_tree(
+        "./data/members.json", None
+    )  # Remove relationships file argument
     # family.print_family_tree()
 
     # Create UI

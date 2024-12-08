@@ -8,7 +8,10 @@
         "occupation": "Retired Doctor",
         "aspiration": "Travel the world",
         "cause_of_death": null,
-        "extra_information": "Loves gardening"
+        "extra_information": "Loves gardening",
+        "father": null,
+        "mother": null,
+        "spouses": []
     },
     {
         "id": 2,
@@ -19,7 +22,10 @@
         "occupation": "Retired Teacher",
         "aspiration": "Write a book",
         "cause_of_death": null,
-        "extra_information": "Expert baker"
+        "extra_information": "Expert baker",
+        "father": null,
+        "mother": null,
+        "spouses": []
     },
     {
         "id": 3,
@@ -30,6 +36,37 @@
         "occupation": "Software Engineer",
         "aspiration": "Start a company",
         "cause_of_death": null,
-        "extra_information": null
+        "extra_information": null,
+        "father": "Ben Robertson",
+        "mother": "Brooke Robertson",
+        "spouses": []
+    },
+    {
+        "id": 4,
+        "name": "Sally",
+        "age": null,
+        "gender": null,
+        "location": null,
+        "occupation": null,
+        "aspiration": null,
+        "cause_of_death": null,
+        "extra_information": null,
+        "father": "Robert Smith",
+        "mother": "bronco",
+        "spouses": []
+    },
+    {
+        "id": 5,
+        "name": "bronco",
+        "age": null,
+        "gender": null,
+        "location": null,
+        "occupation": null,
+        "aspiration": null,
+        "cause_of_death": null,
+        "extra_information": null,
+        "father": null,
+        "mother": null,
+        "spouses": []
     }
 ]
