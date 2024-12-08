@@ -66,17 +66,16 @@ class FamilyTree:
             "father": father,
             "mother": mother,
             "spouses": [spouse for spouse in (spouses or []) if spouse is not None],
-            "children": [],
         }
 
         # Store the member using their name as the key
         self.members[name] = member
 
-        # Add member to parents' children lists
-        if father and father in self.members:
-            self.members[father]["children"].append(name)
-        if mother and mother in self.members:
-            self.members[mother]["children"].append(name)
+        # Remove code that adds member to parents' children lists
+        # if father and father in self.members:
+        #     self.members[father]["children"].append(name)
+        # if mother and mother in self.members:
+        #     self.members[mother]["children"].append(name)
 
         return name
 
