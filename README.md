@@ -38,7 +38,7 @@ cd sims-family-tree-builder
 
 3. Run the application using uv:
 ```bash
-uv run run_tree.py
+uv run main.py
 ```
 
 ## Usage
@@ -49,10 +49,10 @@ uv run run_tree.py
    - Enter their name, birth date, and gender
    - Add custom information like occupation, traits, or life stage
 
-2. Create relationships between Sims:
-   - Select two Sims
-   - Choose relationship type (parent, spouse, sibling)
-   - The relationship will be displayed in each Sim's profile
+2. Edit metadata for your Sim(s):
+   - Add their father/mother to track family lineage
+   - Include information like their age, cause of death, or important traits
+   - The metadata will be displayed in each Sim's profile
 
 3. View the family tree:
    - Click "Visualize Tree" to see a graphical representation
@@ -61,22 +61,9 @@ uv run run_tree.py
    - Solid lines show parent-child relationships
    - Dashed lines show marriages/partnerships
 
-4. Save your work:
-   - Click "Save Tree" to store your family tree
-   - Click "Load Tree" to continue working on a saved tree
-
 ## Project Structure
 
-```
-sims-family-tree-builder/
-├── scripts/
-│   ├── family_tree_base.py    # Core family tree logic
-│   ├── gui_creation.py        # User interface implementation
-│   └── tree_visualizer.py     # Tree visualization module
-├── run_tree.py               # Main application entry point
-├── requirements.txt          # Project dependencies
-└── README.md
-```
+TBD
 
 ## Dependencies
 
