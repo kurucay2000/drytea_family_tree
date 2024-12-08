@@ -1,3 +1,23 @@
+## v1.1.0 (2024-12-07)
+
+### Fix
+
+- fixed some bugs with children data
+
+### Refactor
+
+- a number of UI fixes and a refactor of the GUI elements
+
+## v1.0.2 (2024-12-07)
+
+### Feat
+
+- improve GUI and refactor out relationships for tracking parents
+- improve add family member function/UI
+- create ability to edit member information in UI
+- add ability to remove a member from the UI
+- adjust input to take JSON files rather than hard-coded
+
 ## v0.1.0 (2024-12-07)
 
 ### Feat
