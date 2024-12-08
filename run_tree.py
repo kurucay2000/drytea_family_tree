@@ -1,16 +1,10 @@
 from scripts.family_tree_base import create_family_tree
-from scripts.gui_creation import FamilyTreeUI
+from scripts.family_tree_ui import FamilyTreeUI
 from scripts.tree_visualizer import add_visualization_to_ui
 
 
 def main():
-    # Create a family tree
-    family = create_family_tree(
-        "./data/members.json", None
-    )  # Remove relationships file argument
-    # family.print_family_tree()
-
-    # Create UI
+    family = create_family_tree("./data/members.json", None)
     app = FamilyTreeUI(family)
     add_visualization_to_ui(app)
     app.run()

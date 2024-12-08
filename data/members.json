@@ -11,7 +11,8 @@
         "extra_information": "Loves gardening",
         "father": null,
         "mother": null,
-        "spouses": []
+        "spouses": [],
+        "children": []
     },
     {
         "id": 2,
@@ -25,7 +26,8 @@
         "extra_information": "Expert baker",
         "father": null,
         "mother": null,
-        "spouses": []
+        "spouses": [],
+        "children": []
     },
     {
         "id": 3,
@@ -39,7 +41,8 @@
         "extra_information": null,
         "father": "Ben Robertson",
         "mother": "Brooke Robertson",
-        "spouses": []
+        "spouses": [],
+        "children": []
     },
     {
         "id": 4,
@@ -53,7 +56,8 @@
         "extra_information": null,
         "father": "Robert Smith",
         "mother": "bronco",
-        "spouses": []
+        "spouses": [],
+        "children": []
     },
     {
         "id": 5,
@@ -67,6 +71,7 @@
         "extra_information": null,
         "father": null,
         "mother": null,
-        "spouses": []
+        "spouses": [],
+        "children": []
     }
 ]
