@@ -1,6 +1,6 @@
-from scripts.family_tree_base import create_family_tree
-from scripts.family_tree_ui import FamilyTreeUI
-from scripts.tree_visualizer import add_visualization_to_ui
+from scripts.family_tree import create_family_tree
+from gui.main_window import FamilyTreeUI
+from gui.tree_visualizer import add_visualization_to_ui
 
 
 def main():
