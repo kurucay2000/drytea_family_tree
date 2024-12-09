@@ -80,6 +80,20 @@ class AddMemberDialog:
                     textvariable=self.detail_vars[var_key],
                     state="readonly",
                 )
+            elif var_key == "age":
+                self.detail_entries[var_key] = ttk.Combobox(
+                    details_frame,
+                    textvariable=self.detail_vars[var_key],
+                    values=[
+                        "Infant",
+                        "Toddler",
+                        "Child",
+                        "Teen",
+                        "Young Adult",
+                        "Adult",
+                        "Elder",
+                    ],
+                )
             else:
                 self.detail_entries[var_key] = ttk.Entry(
                     details_frame, textvariable=self.detail_vars[var_key]
@@ -147,13 +161,19 @@ class AddMemberDialog:
                 value = int(value)
             if value:  # Only include non-empty values
                 if field_name == "age":
-                    try:
-                        value = int(float(value))
-                        if value < 0:
-                            messagebox.showerror("Error", "Age cannot be negative")
-                            return
-                    except ValueError:
-                        messagebox.showerror("Error", "Age must be a valid number")
+                    valid_ages = [
+                        "Infant",
+                        "Toddler",
+                        "Child",
+                        "Teen",
+                        "Young Adult",
+                        "Adult",
+                        "Elder",
+                    ]
+                    if value.title() not in valid_ages:
+                        messagebox.showerror(
+                            "Error", f"Age must be one of: {', '.join(valid_ages)}"
+                        )
                         return
 
                 # Validate parent fields

@@ -12,7 +12,7 @@ class FamilyTree:
         self,
         name=None,
         id=None,  # Add ID parameter
-        age=None,
+        age=None,  # Age is now a string
         gender=None,
         location=None,
         occupation=None,
@@ -41,16 +41,20 @@ class FamilyTree:
             if gender not in valid_genders:
                 raise ValueError(f"Gender must be one of: {', '.join(valid_genders)}")
 
-        # Convert age to integer if provided
-        if age is not None:
-            try:
-                age = int(float(age))
-                if age < 0:
-                    raise ValueError("Age cannot be negative")
-            except ValueError as e:
-                if str(e) == "Age cannot be negative":
-                    raise
-                raise ValueError("Age must be a valid integer")
+        # Validate age as a string
+        valid_ages = [
+            "Infant",
+            "Toddler",
+            "Child",
+            "Teen",
+            "Young Adult",
+            "Adult",
+            "Elder",
+        ]
+        if age:
+            age = age.title()
+            if age not in valid_ages:
+                raise ValueError(f"Age must be one of: {', '.join(valid_ages)}")
 
         # Create member dictionary
         member = {

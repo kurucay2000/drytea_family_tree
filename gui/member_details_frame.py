@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from utils.validate import validate_parent
+import json
 
 
 class MemberDetailsFrame:
@@ -48,6 +49,20 @@ class MemberDetailsFrame:
                     details_frame,
                     textvariable=self.detail_vars[var_key],
                     values=["Male", "Female", "Alien", "Other"],
+                )
+            elif var_key == "age":
+                self.detail_entries[var_key] = ttk.Combobox(
+                    details_frame,
+                    textvariable=self.detail_vars[var_key],
+                    values=[
+                        "Infant",
+                        "Toddler",
+                        "Child",
+                        "Teen",
+                        "Young Adult",
+                        "Adult",
+                        "Elder",
+                    ],
                 )
             elif var_key == "id":
                 self.detail_entries[var_key] = ttk.Entry(
@@ -139,13 +154,19 @@ class MemberDetailsFrame:
             if new_value != old_value:
                 # Age validation
                 if field_name == "age" and new_value:
-                    try:
-                        value = int(float(new_value))
-                        if value < 0:
-                            messagebox.showerror("Error", "Age cannot be negative")
-                            return
-                    except ValueError:
-                        messagebox.showerror("Error", "Age must be a valid number")
+                    valid_ages = [
+                        "Infant",
+                        "Toddler",
+                        "Child",
+                        "Teen",
+                        "Young Adult",
+                        "Adult",
+                        "Elder",
+                    ]
+                    if new_value.title() not in valid_ages:
+                        messagebox.showerror(
+                            "Error", f"Age must be one of: {', '.join(valid_ages)}"
+                        )
                         return
 
                 # Parent validation
