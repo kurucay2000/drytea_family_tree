@@ -75,7 +75,7 @@ class TestMemberDetailsFrame:
             "tkinter.ttk.Button"
         ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.Frame"), patch(
             "tkinter.ttk.LabelFrame"
-        ):
+        ), patch("tkinter.ttk.Style"):
             frame = MemberDetailsFrame(mock_tk, mock_family_tree, mock_save_callback)
             return frame
 
@@ -109,7 +109,7 @@ class TestAddMemberDialog:
             "tkinter.ttk.Button"
         ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.Frame"), patch(
             "tkinter.ttk.LabelFrame"
-        ):
+        ), patch("tkinter.ttk.Style"):
             mock_family_tree = Mock()
             mock_family_tree.members = sample_family_tree
             mock_callback = Mock()
@@ -162,7 +162,9 @@ class TestFamilyTreeUI:
             "tkinter.ttk.Entry"
         ), patch("tkinter.ttk.Combobox"), patch("tkinter.ttk.Button"), patch(
             "tkinter.ttk.Label"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"):
+        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
+            "tkinter.ttk.Style"
+        ):
             ui = FamilyTreeUI(mock_family_tree)
             ui.member_listbox = mock_listbox
             return ui

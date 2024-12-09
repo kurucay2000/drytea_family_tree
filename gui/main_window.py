@@ -42,6 +42,36 @@ class FamilyTreeUI:
         self.member_ids = []
         self._create_widgets()
 
+    def _get_last_name(self, member):
+        """Extract last name from member data for sorting"""
+        name = member.get("name", "Unknown")
+        name_parts = name.strip().split()
+        return name_parts[-1].lower() if name_parts else ""
+
+    def _populate_member_list(self):
+        """Populate the member list sorted by last name"""
+        current_selection = self.member_listbox.curselection()
+        self.member_listbox.delete(0, tk.END)
+        self.member_ids = []
+
+        # Create list of members with their sorting information
+        sorted_members = []
+        for member_id, member in self.family_tree.members.items():
+            last_name = self._get_last_name(member)
+            full_name = member.get("name", "Unknown")
+            sorted_members.append((last_name, full_name, member_id))
+
+        # Sort by last name, then by full name
+        sorted_members.sort(key=lambda x: (x[0], x[1]))
+
+        # Populate the listbox with sorted names
+        for _, full_name, member_id in sorted_members:
+            self.member_listbox.insert(tk.END, full_name)
+            self.member_ids.append(member_id)
+
+        if current_selection:
+            self.member_listbox.selection_set(current_selection)
+
     def _create_widgets(self):
         # Left frame for member list
         left_frame = ttk.Frame(self.main_frame)
@@ -106,23 +136,6 @@ class FamilyTreeUI:
         )
         remove_button.pack(side=tk.LEFT, padx=5)
 
-    def _populate_member_list(self):
-        current_selection = self.member_listbox.curselection()
-        self.member_listbox.delete(0, tk.END)
-        self.member_ids = []
-        sorted_members = sorted(
-            self.family_tree.members.items(),
-            key=lambda x: int(x[1].get("id", float("inf")))
-            if isinstance(x[1].get("id"), str)
-            else x[1].get("id", float("inf")),
-        )
-        for member_id, member in sorted_members:
-            name = member.get("name", "Unknown")
-            self.member_listbox.insert(tk.END, name)
-            self.member_ids.append(member_id)
-        if current_selection:
-            self.member_listbox.selection_set(current_selection)
-
     def _on_member_select(self, event):
         if not self.member_listbox.curselection():
             return
@@ -150,19 +163,6 @@ class FamilyTreeUI:
                     str(member.get(key, "")) if member.get(key) is not None else ""
                 )
                 if new_value != old_value:
-                    if key == "age" and new_value:
-                        try:
-                            new_value = int(float(new_value))
-                            if new_value < 0:
-                                raise ValueError("Age cannot be negative")
-                        except ValueError as e:
-                            if str(e) == "Age cannot be negative":
-                                messagebox.showerror("Error", "Age cannot be negative")
-                            else:
-                                messagebox.showerror(
-                                    "Error", "Age must be a valid number"
-                                )
-                            return
                     if new_value:
                         updated_values[key] = new_value
                         field_name = key.replace("_", " ").title()
@@ -174,6 +174,7 @@ class FamilyTreeUI:
                             changes_description.append(
                                 f"{field_name}: Added '{new_value}'"
                             )
+
             new_extra_info = self.details_frame.extra_info_text.get(
                 "1.0", tk.END
             ).strip()
@@ -184,14 +185,17 @@ class FamilyTreeUI:
                     changes_description.append("Extra Information has been modified")
                 else:
                     changes_description.append("Extra Information has been added")
+
             if not changes_description:
                 messagebox.showinfo(
                     "No Changes", "No changes were made to the member details."
                 )
                 return
+
             confirm_message = "The following changes will be made:\n\n"
             confirm_message += "\n".join(changes_description)
             confirm_message += "\n\nDo you want to save these changes?"
+
             if messagebox.askyesno("Confirm Changes", confirm_message):
                 member.update(updated_values)
                 members_data = []
@@ -199,10 +203,13 @@ class FamilyTreeUI:
                     member_data = member.copy()
                     member_data["id"] = member.get("id")
                     members_data.append(member_data)
+
                 with open("./data/members.json", "w") as f:
                     json.dump(members_data, f, indent=4)
+
                 self._populate_member_list()
                 messagebox.showinfo("Success", "Member details updated successfully!")
+
         except Exception as e:
             messagebox.showerror("Error", f"Failed to update member details: {str(e)}")
 
@@ -210,13 +217,16 @@ class FamilyTreeUI:
         if not self.current_member_id:
             messagebox.showinfo("No Selection", "Please select a member to remove.")
             return
+
         member = self.family_tree.members[self.current_member_id]
         member_name = member.get("name", f"Member {self.current_member_id}")
+
         if not messagebox.askyesno(
             "Confirm Deletion",
             f"Are you sure you want to remove {member_name} from the family tree?\n\nThis will also remove all parent/child relationships associated with this member.",
         ):
             return
+
         try:
             # Remove the member
             del self.family_tree.members[self.current_member_id]
@@ -225,14 +235,17 @@ class FamilyTreeUI:
                 member_data = member.copy()
                 member_data["id"] = member.get("id")
                 members_data.append(member_data)
+
             with open("./data/members.json", "w") as f:
                 json.dump(members_data, f, indent=4)
+
             self.details_frame.clear_details()
             self.current_member_id = None
             self._populate_member_list()
             messagebox.showinfo(
                 "Success", f"{member_name} has been removed from the family tree."
             )
+
         except Exception as e:
             messagebox.showerror("Error", f"Failed to remove member: {str(e)}")
 
