@@ -11,6 +11,7 @@ class FamilyTreeUI:
         self.root = tk.Tk()
         self.root.title("Family Tree Viewer")
         self.root.geometry("1000x800")
+        self.sort_by_last_name = True  # Default to sorting by last name
 
         # Set the theme colors
         self.root.configure(bg="#f0e6ff")  # Light purple background
@@ -42,14 +43,31 @@ class FamilyTreeUI:
         self.member_ids = []
         self._create_widgets()
 
+    # [Previous methods remain unchanged: _get_last_name, _get_first_name, _toggle_sort, _populate_member_list]
     def _get_last_name(self, member):
         """Extract last name from member data for sorting"""
         name = member.get("name", "Unknown")
         name_parts = name.strip().split()
         return name_parts[-1].lower() if name_parts else ""
 
+    def _get_first_name(self, member):
+        """Extract first name from member data for sorting"""
+        name = member.get("name", "Unknown")
+        name_parts = name.strip().split()
+        return name_parts[0].lower() if name_parts else ""
+
+    def _toggle_sort(self):
+        """Toggle between first and last name sorting"""
+        self.sort_by_last_name = not self.sort_by_last_name
+        self._populate_member_list()
+        # Update button text
+        sort_text = (
+            "Sort by First Name" if self.sort_by_last_name else "Sort by Last Name"
+        )
+        self.sort_button.configure(text=sort_text)
+
     def _populate_member_list(self):
-        """Populate the member list sorted by last name"""
+        """Populate the member list sorted by chosen method"""
         current_selection = self.member_listbox.curselection()
         self.member_listbox.delete(0, tk.END)
         self.member_ids = []
@@ -57,11 +75,14 @@ class FamilyTreeUI:
         # Create list of members with their sorting information
         sorted_members = []
         for member_id, member in self.family_tree.members.items():
-            last_name = self._get_last_name(member)
+            if self.sort_by_last_name:
+                sort_key = self._get_last_name(member)
+            else:
+                sort_key = self._get_first_name(member)
             full_name = member.get("name", "Unknown")
-            sorted_members.append((last_name, full_name, member_id))
+            sorted_members.append((sort_key, full_name, member_id))
 
-        # Sort by last name, then by full name
+        # Sort by chosen key, then by full name
         sorted_members.sort(key=lambda x: (x[0], x[1]))
 
         # Populate the listbox with sorted names
@@ -73,7 +94,7 @@ class FamilyTreeUI:
             self.member_listbox.selection_set(current_selection)
 
     def _create_widgets(self):
-        # Left frame for member list
+        # Left frame for member list and sorting controls
         left_frame = ttk.Frame(self.main_frame)
         left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
 
@@ -98,6 +119,15 @@ class FamilyTreeUI:
         )
         list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.member_listbox.configure(yscrollcommand=list_scrollbar.set)
+
+        # Add sort toggle button at the bottom
+        self.sort_button = ttk.Button(
+            left_frame,
+            text="Sort by First Name",  # Initial text (since default is last name sort)
+            command=self._toggle_sort,
+            style="TButton",
+        )
+        self.sort_button.pack(side=tk.BOTTOM, pady=(5, 0))
 
         # Bind selection event
         self.member_listbox.bind("<<ListboxSelect>>", self._on_member_select)
@@ -135,6 +165,8 @@ class FamilyTreeUI:
             style="TButton",
         )
         remove_button.pack(side=tk.LEFT, padx=5)
+
+    # [Remaining methods unchanged: _on_member_select, _save_member_changes, _remove_member, _add_member, run]
 
     def _on_member_select(self, event):
         if not self.member_listbox.curselection():
