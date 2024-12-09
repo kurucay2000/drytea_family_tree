@@ -12,7 +12,7 @@ def sample_family_tree():
         "1": {
             "id": 1,
             "name": "Test Person",
-            "age": 30,
+            "age": "Child",
             "gender": "Male",
             "location": "Test City",
             "occupation": "Tester",
@@ -132,11 +132,14 @@ class TestAddMemberDialog:
         dialog.detail_vars["age"].set("invalid")
 
         # Mock the open() function to prevent actual file operations
-        with patch("builtins.open", mock_open()) as mock_file:
+        with patch("builtins.open", mock_open()):
             dialog._add_member()
 
         # Verify error message was shown
-        mock_error.assert_called_with("Error", "Age must be a valid number")
+        mock_error.assert_called_with(
+            "Error",
+            "Age must be one of: Infant, Toddler, Child, Teen, Young Adult, Adult, Elder",
+        )
 
         # Verify add_member was not called
         assert not dialog.family_tree.add_member.called
