@@ -186,18 +186,20 @@ class MemberDetailsFrame:
         updated_values = {}
         changes_description = []
 
+        # Handle regular fields
         for field_name, var in self.detail_vars.items():
             new_value = var.get().strip()
-            # Convert ID to integer
-            if field_name == "id" and new_value:
-                new_value = int(new_value)
-            old_value = (
-                str(current_member.get(field_name, ""))
-                if current_member.get(field_name) is not None
-                else ""
-            )
+            old_value = current_member.get(field_name, "")
 
-            if new_value != old_value:
+            # Skip ID field in comparison since it's read-only and shouldn't change
+            if field_name == "id":
+                continue
+
+            # Convert values to strings for comparison
+            new_value_str = str(new_value) if new_value is not None else ""
+            old_value_str = str(old_value) if old_value is not None else ""
+
+            if new_value_str != old_value_str:
                 # Age validation
                 if field_name == "age" and new_value:
                     valid_ages = [
@@ -238,15 +240,32 @@ class MemberDetailsFrame:
                             f"{field_label}: Added '{new_value}'"
                         )
 
-        # Get extra information changes
+        # Handle extra information changes
         new_extra_info = self.extra_info_text.get("1.0", tk.END).strip()
         old_extra_info = current_member.get("extra_information", "")
+
+        # Normalize both values to None if they're empty strings
+        old_extra_info = old_extra_info if old_extra_info else None
+        new_extra_info = new_extra_info if new_extra_info else None
+
+        # Only include in changes if there's an actual difference
         if new_extra_info != old_extra_info:
-            updated_values["extra_information"] = new_extra_info
-            if old_extra_info:
-                changes_description.append("Extra Information has been modified")
-            else:
-                changes_description.append("Extra Information has been added")
+            if new_extra_info:  # Only update if there's actual content
+                updated_values["extra_information"] = new_extra_info
+                if old_extra_info:
+                    changes_description.append(
+                        f"Extra Information: '{old_extra_info}' → '{new_extra_info}'"
+                    )
+                else:
+                    changes_description.append(
+                        f"Extra Information: Added '{new_extra_info}'"
+                    )
+            else:  # If new value is empty/None, clear the field
+                updated_values["extra_information"] = None
+                if old_extra_info:
+                    changes_description.append(
+                        f"Extra Information: Removed '{old_extra_info}'"
+                    )
 
         if not changes_description:
             messagebox.showinfo(
