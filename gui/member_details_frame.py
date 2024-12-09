@@ -149,25 +149,21 @@ class MemberDetailsFrame:
         self.save_changes_btn.grid_remove()
 
     def update_details(self, member):
+        """Update the details frame with member information"""
+        # Store the original member data for accurate change detection
+        self.original_member = member.copy()
+
         for key, var in self.detail_vars.items():
-            if key == "id":
-                id_value = member.get("id", "ID Missing")
-                var.set(str(id_value))
-            else:
-                value = member.get(key)
-                var.set(str(value) if value is not None else "")
+            value = member.get(key)
+            var.set(str(value) if value is not None else "")
+
+        # Clear and update extra information text
         self.extra_info_text.delete("1.0", tk.END)
         if member.get("extra_information"):
             self.extra_info_text.insert("1.0", member["extra_information"])
+
         self.save_changes_btn.grid()
         self.current_member_id = member.get("id")
-
-    def clear_details(self):
-        for var in self.detail_vars.values():
-            var.set("")
-        self.extra_info_text.delete("1.0", tk.END)
-        self.save_changes_btn.grid_remove()
-        self.current_member_id = None
 
     def save_changes(self):
         if self.current_member_id is None:
@@ -189,14 +185,14 @@ class MemberDetailsFrame:
         # Handle regular fields
         for field_name, var in self.detail_vars.items():
             new_value = var.get().strip()
-            old_value = current_member.get(field_name, "")
+            old_value = self.original_member.get(field_name)
 
             # Skip ID field in comparison since it's read-only and shouldn't change
             if field_name == "id":
                 continue
 
             # Convert values to strings for comparison
-            new_value_str = str(new_value) if new_value is not None else ""
+            new_value_str = str(new_value) if new_value else ""
             old_value_str = str(old_value) if old_value is not None else ""
 
             if new_value_str != old_value_str:
@@ -242,13 +238,12 @@ class MemberDetailsFrame:
 
         # Handle extra information changes
         new_extra_info = self.extra_info_text.get("1.0", tk.END).strip()
-        old_extra_info = current_member.get("extra_information", "")
+        old_extra_info = self.original_member.get("extra_information", "")
 
-        # Normalize both values to None if they're empty strings
-        old_extra_info = old_extra_info if old_extra_info else None
+        # Normalize both values for comparison
         new_extra_info = new_extra_info if new_extra_info else None
+        old_extra_info = old_extra_info if old_extra_info else None
 
-        # Only include in changes if there's an actual difference
         if new_extra_info != old_extra_info:
             if new_extra_info:  # Only update if there's actual content
                 updated_values["extra_information"] = new_extra_info
