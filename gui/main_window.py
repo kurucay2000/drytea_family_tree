@@ -11,36 +11,100 @@ class FamilyTreeUI:
         self.root = tk.Tk()
         self.root.title("Family Tree Viewer")
         self.root.geometry("1000x800")
-        self.main_frame = ttk.Frame(self.root, padding="10")
+
+        # Set the theme colors
+        self.root.configure(bg="#f0e6ff")  # Light purple background
+
+        # Configure styles
+        style = ttk.Style()
+        style.configure("TFrame", background="#f0e6ff")
+        style.configure("TLabelframe", background="#f0e6ff")
+        style.configure("TLabelframe.Label", background="#f0e6ff", foreground="black")
+        style.configure(
+            "TButton",
+            background="#6a0dad",  # Deep purple
+            foreground="black",
+            bordercolor="black",
+            focuscolor="#8a2be2",
+        )  # Lighter purple for focus
+        style.configure("TLabel", background="#f0e6ff", foreground="black")
+        style.configure("TEntry", fieldbackground="white", foreground="black")
+        style.configure(
+            "Treeview", background="white", fieldbackground="white", foreground="black"
+        )
+        style.configure(
+            "TCombobox", fieldbackground="white", background="white", foreground="black"
+        )
+
+        self.main_frame = ttk.Frame(self.root, padding="10", style="TFrame")
         self.main_frame.pack(fill=tk.BOTH, expand=True)
         self.current_member_id = None
         self.member_ids = []
         self._create_widgets()
 
     def _create_widgets(self):
+        # Left frame for member list
         left_frame = ttk.Frame(self.main_frame)
         left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        # Title label for members list
         ttk.Label(left_frame, text="Family Members", font=("Arial", 12, "bold")).pack()
-        self.member_listbox = tk.Listbox(left_frame, width=30)
+
+        # Member listbox with purple theme
+        self.member_listbox = tk.Listbox(
+            left_frame,
+            width=30,
+            bg="white",
+            fg="black",
+            selectbackground="#8a2be2",  # Purple selection
+            selectforeground="white",
+            font=("Arial", 10),
+        )
         self.member_listbox.pack(fill=tk.BOTH, expand=True)
+
+        # Add scrollbar for member list
+        list_scrollbar = ttk.Scrollbar(
+            left_frame, orient=tk.VERTICAL, command=self.member_listbox.yview
+        )
+        list_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.member_listbox.configure(yscrollcommand=list_scrollbar.set)
+
+        # Bind selection event
         self.member_listbox.bind("<<ListboxSelect>>", self._on_member_select)
+
+        # Populate the member list
         self._populate_member_list()
 
+        # Right frame for details and buttons
         right_frame = ttk.Frame(self.main_frame)
         right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True, padx=5, pady=5)
+
+        # Create member details frame
         self.details_frame = MemberDetailsFrame(
             right_frame, self.family_tree, self._save_member_changes
         )
 
+        # Button frame
         buttons_frame = ttk.Frame(right_frame)
         buttons_frame.pack(fill=tk.X, pady=5)
-        self.buttons_frame = buttons_frame
-        ttk.Button(buttons_frame, text="Add Member", command=self._add_member).pack(
-            side=tk.LEFT, padx=5
+        self.buttons_frame = (
+            buttons_frame  # Store reference for adding visualization button
         )
-        ttk.Button(
-            buttons_frame, text="Remove Member", command=self._remove_member
-        ).pack(side=tk.LEFT, padx=5)
+
+        # Add Member button
+        add_button = ttk.Button(
+            buttons_frame, text="Add Member", command=self._add_member, style="TButton"
+        )
+        add_button.pack(side=tk.LEFT, padx=5)
+
+        # Remove Member button
+        remove_button = ttk.Button(
+            buttons_frame,
+            text="Remove Member",
+            command=self._remove_member,
+            style="TButton",
+        )
+        remove_button.pack(side=tk.LEFT, padx=5)
 
     def _populate_member_list(self):
         current_selection = self.member_listbox.curselection()

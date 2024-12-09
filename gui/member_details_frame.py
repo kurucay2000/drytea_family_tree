@@ -23,9 +23,11 @@ class MemberDetailsFrame:
         self._create_widgets(parent)
 
     def _create_widgets(self, parent):
-        details_frame = ttk.LabelFrame(parent, text="Member Details")
+        # Create main details frame with purple theme
+        details_frame = ttk.LabelFrame(parent, text="Member Details", padding="10")
         details_frame.pack(fill=tk.BOTH, expand=True)
 
+        # Regular fields with their labels and entries
         regular_fields = [
             ("ID:", "id"),
             ("Name:", "name"),
@@ -40,15 +42,29 @@ class MemberDetailsFrame:
         ]
 
         self.detail_entries = {}
+
+        # Create each field with appropriate styling
         for i, (label_text, var_key) in enumerate(regular_fields):
-            ttk.Label(details_frame, text=label_text).grid(
+            # Label
+            ttk.Label(details_frame, text=label_text, style="TLabel").grid(
                 row=i, column=0, sticky="w", padx=5, pady=2
             )
+
+            # Create appropriate widget based on field type
             if var_key == "gender":
                 self.detail_entries[var_key] = ttk.Combobox(
                     details_frame,
                     textvariable=self.detail_vars[var_key],
                     values=["Male", "Female", "Alien", "Other"],
+                    state="readonly",
+                    style="TCombobox",
+                )
+            elif var_key == "id":
+                self.detail_entries[var_key] = ttk.Entry(
+                    details_frame,
+                    textvariable=self.detail_vars[var_key],
+                    state="readonly",
+                    style="TEntry",
                 )
             elif var_key == "age":
                 self.detail_entries[var_key] = ttk.Combobox(
@@ -63,43 +79,73 @@ class MemberDetailsFrame:
                         "Adult",
                         "Elder",
                     ],
-                )
-            elif var_key == "id":
-                self.detail_entries[var_key] = ttk.Entry(
-                    details_frame,
-                    textvariable=self.detail_vars[var_key],
                     state="readonly",
+                    style="TCombobox",
                 )
             else:
                 self.detail_entries[var_key] = ttk.Entry(
-                    details_frame, textvariable=self.detail_vars[var_key]
+                    details_frame,
+                    textvariable=self.detail_vars[var_key],
+                    style="TEntry",
                 )
+
+            # Grid the entry widget
             self.detail_entries[var_key].grid(
                 row=i, column=1, sticky="ew", padx=5, pady=2
             )
 
-        ttk.Label(details_frame, text="Extra Information:").grid(
+        # Extra Information section
+        ttk.Label(details_frame, text="Extra Information:", style="TLabel").grid(
             row=len(regular_fields), column=0, sticky="nw", padx=5, pady=2
         )
+
+        # Create frame for text area and scrollbar
         text_frame = ttk.Frame(details_frame)
         text_frame.grid(
             row=len(regular_fields), column=1, sticky="nsew", padx=5, pady=2
         )
-        self.extra_info_text = tk.Text(text_frame, wrap=tk.WORD, height=8, width=40)
+
+        # Text area with purple theme
+        self.extra_info_text = tk.Text(
+            text_frame,
+            wrap=tk.WORD,
+            height=8,
+            width=40,
+            bg="white",
+            fg="black",
+            insertbackground="black",
+            relief=tk.SOLID,
+            borderwidth=1,
+            font=("Arial", 10),
+        )
+
+        # Scrollbar for text area
         scrollbar = ttk.Scrollbar(
             text_frame, orient="vertical", command=self.extra_info_text.yview
         )
+
+        # Configure text widget scrollbar
         self.extra_info_text.configure(yscrollcommand=scrollbar.set)
+
+        # Pack text widget and scrollbar
         self.extra_info_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        # Configure grid weights
         details_frame.grid_columnconfigure(1, weight=1)
 
+        # Save Changes button
         self.save_changes_btn = ttk.Button(
-            details_frame, text="Save Changes", command=self.save_callback
+            details_frame,
+            text="Save Changes",
+            command=self.save_callback,
+            style="TButton",
         )
         self.save_changes_btn.grid(
             row=len(regular_fields) + 1, column=0, columnspan=2, pady=10
         )
+
+        # Initially hide the save button
         self.save_changes_btn.grid_remove()
 
     def update_details(self, member):

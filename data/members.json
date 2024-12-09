@@ -14,9 +14,7 @@
         "spouses": [
             "Ben Robertson",
             "Jaime Fraser"
-        ],
-        "maiden_name": "Brooke Reins",
-        "occult": null
+        ]
     },
     {
         "id": 2,
@@ -32,9 +30,7 @@
         "mother": null,
         "spouses": [
             "Brooke Robertson"
-        ],
-        "maiden_name": null,
-        "occult": null
+        ]
     },
     {
         "id": 3,
@@ -50,9 +46,7 @@
         "mother": "Brooke Robertson",
         "spouses": [
             "Harry Potter"
-        ],
-        "maiden_name": "Brianna Fraser",
-        "occult": null
+        ]
     },
     {
         "id": 4,
@@ -68,9 +62,7 @@
         "mother": null,
         "spouses": [
             "Cassandra Goth Fraser"
-        ],
-        "maiden_name": null,
-        "occult": null
+        ]
     },
     {
         "id": 5,
@@ -86,9 +78,7 @@
         "mother": "Bella Morlind",
         "spouses": [
             "Jamie Fraser"
-        ],
-        "maiden_name": "Cassandra Goth",
-        "occult": null
+        ]
     },
     {
         "id": 6,
@@ -104,9 +94,7 @@
         "mother": "Brooke Robertson",
         "spouses": [
             "Brylee Robertson"
-        ],
-        "maiden_name": null,
-        "occult": null
+        ]
     },
     {
         "id": 7,
@@ -122,9 +110,7 @@
         "mother": "Mele Kahananui",
         "spouses": [
             "Sage Robertson"
-        ],
-        "maiden_name": "Brylee Kahananui",
-        "occult": "Mermaid"
+        ]
     },
     {
         "id": 8,
@@ -138,9 +124,7 @@
         "extra_information": "Collector, Creative, Good",
         "father": "Ben Robertson",
         "mother": "Brooke Robertson",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 9,
@@ -154,9 +138,7 @@
         "extra_information": "Goofball",
         "father": "Ben Robertson",
         "mother": "Brooke Robertson",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 10,
@@ -170,9 +152,7 @@
         "extra_information": "Genius",
         "father": "Ben Robertson",
         "mother": "Brooke Robertson",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 11,
@@ -188,9 +168,7 @@
         "mother": "Brooke Robertson",
         "spouses": [
             "Falcon Sanchez"
-        ],
-        "maiden_name": "Ashton Robertson",
-        "occult": null
+        ]
     },
     {
         "id": 12,
@@ -206,9 +184,7 @@
         "mother": null,
         "spouses": [
             "Ashton Sanchez"
-        ],
-        "maiden_name": null,
-        "occult": null
+        ]
     },
     {
         "id": 13,
@@ -222,9 +198,7 @@
         "extra_information": "Good",
         "father": "Falcon Sanchez",
         "mother": "Ashton Sanchez",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 14,
@@ -238,9 +212,7 @@
         "extra_information": "Angelic",
         "father": "Falcon Sanchez",
         "mother": "Ashton Robertson",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 15,
@@ -254,9 +226,7 @@
         "extra_information": "Silly",
         "father": "Falcon Sanchez",
         "mother": "Ashton Robertson",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 16,
@@ -272,9 +242,7 @@
         "mother": "Brooke Robertson",
         "spouses": [
             "Kengo Robertson"
-        ],
-        "maiden_name": null,
-        "occult": null
+        ]
     },
     {
         "id": 17,
@@ -290,9 +258,7 @@
         "mother": "Hana Munch",
         "spouses": [
             "Luke Robertson"
-        ],
-        "maiden_name": "Kengo Fujiwara",
-        "occult": null
+        ]
     },
     {
         "id": 18,
@@ -306,9 +272,7 @@
         "extra_information": "Practice Makes Perfect",
         "father": "Luke Robertson",
         "mother": "Kengo Robertson",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 19,
@@ -322,9 +286,7 @@
         "extra_information": "Active",
         "father": "Luke Robertson",
         "mother": "Kengo Robertson",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 20,
@@ -338,9 +300,7 @@
         "extra_information": "Childish, Bookworm",
         "father": "Sean Boyd",
         "mother": "Alisha Applebee",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 21,
@@ -356,9 +316,7 @@
         "mother": "Cassandra Goth Fraser",
         "spouses": [
             "Julianne Fraser"
-        ],
-        "maiden_name": null,
-        "occult": null
+        ]
     },
     {
         "id": 22,
@@ -372,9 +330,7 @@
         "extra_information": "Neat, Bro",
         "father": "Jamie Fraser",
         "mother": "Cassandra Goth Fraser",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 23,
@@ -390,9 +346,7 @@
         "mother": "Yasemin Tinker",
         "spouses": [
             "Brian Murtaugh Fraser"
-        ],
-        "maiden_name": "Julianne Tinker",
-        "occult": null
+        ]
     },
     {
         "id": 24,
@@ -406,9 +360,7 @@
         "extra_information": "Erratic, Active",
         "father": "Jamie Fraser",
         "mother": "Senior Pollination Technician #3",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": "Alien"
+        "spouses": []
     },
     {
         "id": 25,
@@ -422,9 +374,7 @@
         "extra_information": "Loves Outdoors, Loyal",
         "father": "Jamie Fraser",
         "mother": "Cassandra Goth Fraser",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     },
     {
         "id": 26,
@@ -438,8 +388,6 @@
         "extra_information": "Lesbian, Drug Addict, Forsoke Family, Trailer Park Ho",
         "father": "Ben Robertson",
         "mother": "Brooke Roberson",
-        "spouses": [],
-        "maiden_name": null,
-        "occult": null
+        "spouses": []
     }
 ]
