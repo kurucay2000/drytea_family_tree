@@ -204,8 +204,25 @@ class AddMemberDialog:
 
     def _add_member(self):
         """Process the form data and add the member"""
-        values = {}
+        # Validate age first if provided
+        age_value = self.detail_vars["age"].get().strip()
+        if age_value:
+            valid_ages = [
+                "Infant",
+                "Toddler",
+                "Child",
+                "Teen",
+                "Young Adult",
+                "Adult",
+                "Elder",
+            ]
+            if age_value.title() not in valid_ages:
+                messagebox.showerror(
+                    "Error", f"Age must be one of: {', '.join(valid_ages)}"
+                )
+                return
 
+        values = {}
         # Get values from entry fields
         for field_name, var in self.detail_vars.items():
             value = var.get().strip()
@@ -213,22 +230,6 @@ class AddMemberDialog:
             if field_name == "id" and value:
                 value = int(value)
             if value:  # Only include non-empty values
-                if field_name == "age":
-                    valid_ages = [
-                        "Infant",
-                        "Toddler",
-                        "Child",
-                        "Teen",
-                        "Young Adult",
-                        "Adult",
-                        "Elder",
-                    ]
-                    if value.title() not in valid_ages:
-                        messagebox.showerror(
-                            "Error", f"Age must be one of: {', '.join(valid_ages)}"
-                        )
-                        return
-
                 # Validate parent fields
                 if field_name in ["father", "mother"]:
                     if not validate_parent(value, self.family_tree):

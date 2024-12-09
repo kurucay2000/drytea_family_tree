@@ -138,7 +138,7 @@ class MemberDetailsFrame:
         self.save_changes_btn = ttk.Button(
             details_frame,
             text="Save Changes",
-            command=self.save_callback,
+            command=self.save_changes,
             style="TButton",
         )
         self.save_changes_btn.grid(
@@ -222,6 +222,8 @@ class MemberDetailsFrame:
                             "Error",
                             f"The specified {field_name} '{new_value}' does not exist in the family tree",
                         )
+                        # Clear the invalid parent field
+                        self.detail_vars[field_name].set("")
                         return
 
                 if new_value:
