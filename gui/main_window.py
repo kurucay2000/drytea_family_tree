@@ -166,8 +166,6 @@ class FamilyTreeUI:
         )
         remove_button.pack(side=tk.LEFT, padx=5)
 
-    # [Remaining methods unchanged: _on_member_select, _save_member_changes, _remove_member, _add_member, run]
-
     def _on_member_select(self, event):
         if not self.member_listbox.curselection():
             return
@@ -182,9 +180,16 @@ class FamilyTreeUI:
                 "Error", f"An error occurred while loading member details: {str(e)}"
             )
 
-    def _save_member_changes(self):
+    def _save_member_changes(self, skip_save_check=False):
+        """Save changes to member details"""
         if self.current_member_id is None:
             return
+
+        # If skip_save_check is True, just refresh the member list
+        if skip_save_check:
+            self._populate_member_list()
+            return
+
         try:
             member = self.family_tree.members[self.current_member_id]
             updated_values = {}

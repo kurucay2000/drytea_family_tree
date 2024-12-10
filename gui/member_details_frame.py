@@ -182,20 +182,19 @@ class MemberDetailsFrame:
         updated_values = {}
         changes_description = []
 
-        # Handle regular fields
         for field_name, var in self.detail_vars.items():
-            new_value = var.get().strip()
-            old_value = self.original_member.get(field_name)
-
-            # Skip ID field in comparison since it's read-only and shouldn't change
+            # Skip ID field since it's read-only
             if field_name == "id":
                 continue
 
-            # Convert values to strings for comparison
-            new_value_str = str(new_value) if new_value else ""
-            old_value_str = str(old_value) if old_value is not None else ""
+            new_value = var.get().strip()
+            old_value = current_member.get(field_name, "")
 
-            if new_value_str != old_value_str:
+            # Convert to strings only for comparison if both values exist
+            old_str = str(old_value) if old_value is not None else ""
+            new_str = str(new_value) if new_value else ""
+
+            if new_str != old_str:
                 # Age validation
                 if field_name == "age" and new_value:
                     valid_ages = [
@@ -224,9 +223,10 @@ class MemberDetailsFrame:
                         self.detail_vars[field_name].set("")
                         return
 
+                # Handle both setting and clearing of values
+                field_label = field_name.replace("_", " ").title()
                 if new_value:
                     updated_values[field_name] = new_value
-                    field_label = field_name.replace("_", " ").title()
                     if old_value:
                         changes_description.append(
                             f"{field_label}: '{old_value}' → '{new_value}'"
@@ -235,17 +235,19 @@ class MemberDetailsFrame:
                         changes_description.append(
                             f"{field_label}: Added '{new_value}'"
                         )
+                else:
+                    # Explicitly set to None when clearing a field
+                    updated_values[field_name] = None
+                    if old_value:
+                        changes_description.append(
+                            f"{field_label}: Removed '{old_value}'"
+                        )
 
-        # Handle extra information changes
+        # Get extra information changes
         new_extra_info = self.extra_info_text.get("1.0", tk.END).strip()
-        old_extra_info = self.original_member.get("extra_information", "")
-
-        # Normalize both values for comparison
-        new_extra_info = new_extra_info if new_extra_info else None
-        old_extra_info = old_extra_info if old_extra_info else None
-
+        old_extra_info = current_member.get("extra_information", "")
         if new_extra_info != old_extra_info:
-            if new_extra_info:  # Only update if there's actual content
+            if new_extra_info:
                 updated_values["extra_information"] = new_extra_info
                 if old_extra_info:
                     changes_description.append(
@@ -255,7 +257,7 @@ class MemberDetailsFrame:
                     changes_description.append(
                         f"Extra Information: Added '{new_extra_info}'"
                     )
-            else:  # If new value is empty/None, clear the field
+            else:
                 updated_values["extra_information"] = None
                 if old_extra_info:
                     changes_description.append(
@@ -288,7 +290,10 @@ class MemberDetailsFrame:
                 json.dump(members_data, f, indent=4)
 
             messagebox.showinfo("Success", "Member details updated successfully!")
-            self.save_callback()  # Refresh the UI
+
+            # Call the callback without triggering another save operation
+            if self.save_callback:
+                self.save_callback(skip_save_check=True)
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to update member details: {str(e)}")

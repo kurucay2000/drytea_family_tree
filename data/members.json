@@ -26,8 +26,8 @@
         "aspiration": "Big Happy Family",
         "cause_of_death": "",
         "extra_information": "Domestic, Loyal, Ambitious, Family-Oriented",
-        "father": "",
-        "mother": "",
+        "father": null,
+        "mother": null,
         "spouses": [
             "Brooke Robertson"
         ]
