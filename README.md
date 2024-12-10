@@ -1,5 +1,7 @@
 # Sims Family Tree Builder
 
+[![Build CI](https://github.com/IM-EB/sims_family_tree/actions/workflows/tests.yml/badge.svg?branch=master)](https://github.com/IM-EB/sims_family_tree/actions/workflows/tests.yml)
+
 A Python application for creating and visualizing family trees - specifically for the Sims! Track relationships, add family members, and visualize complex family dynamics just like you would in the game.
 
 ## Features

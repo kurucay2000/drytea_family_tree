@@ -1,4 +1,5 @@
 import pytest
+import tkinter as tk
 from unittest.mock import Mock, patch, mock_open
 from gui.main_window import FamilyTreeUI
 from gui.add_member_dialog import AddMemberDialog
@@ -75,8 +76,9 @@ class TestMemberDetailsFrame:
             "tkinter.ttk.Button"
         ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.Frame"), patch(
             "tkinter.ttk.LabelFrame"
-        ):
+        ), patch("tkinter.ttk.Style"):
             frame = MemberDetailsFrame(mock_tk, mock_family_tree, mock_save_callback)
+            frame.current_member_id = "1"
             return frame
 
     def test_update_details(self, details_frame):
@@ -100,6 +102,151 @@ class TestMemberDetailsFrame:
         assert details_frame.detail_vars["gender"].get() == "Male"
         details_frame.extra_info_text.insert.assert_called_with("1.0", "Test info")
 
+    def test_clear_details(self, details_frame):
+        """Test clearing all member details"""
+        # First set some values
+        test_member = {
+            "id": "1",
+            "name": "Test Person",
+            "age": 30,
+            "gender": "Male",
+            "location": "Test City",
+            "occupation": "Tester",
+            "extra_information": "Test info",
+        }
+        details_frame.update_details(test_member)
+
+        # Reset the mock to clear the initial grid_remove call
+        details_frame.save_changes_btn.grid_remove.reset_mock()
+
+        # Now clear the details
+        details_frame.clear_details()
+
+        # Verify all StringVars are empty
+        for var in details_frame.detail_vars.values():
+            assert var.get() == "", "StringVar should be empty after clearing"
+
+        # Verify extra_info_text was cleared
+        details_frame.extra_info_text.delete.assert_called_with("1.0", tk.END)
+
+        # Verify save button was hidden
+        details_frame.save_changes_btn.grid_remove.assert_called_once()
+
+        # Verify current_member_id was reset
+        assert (
+            details_frame.current_member_id is None
+        ), "current_member_id should be None after clearing"
+
+    @patch("tkinter.messagebox.askyesno", return_value=True)
+    @patch("tkinter.messagebox.showinfo")
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("json.dump")
+    def test_no_changes_detected(
+        self, mock_json_dump, mock_file, mock_showinfo, mock_askyesno, details_frame
+    ):
+        """Test that no changes are detected when values haven't changed"""
+        # Get the original member
+        member = details_frame.family_tree.members["1"]
+
+        # Configure the Text widget mock to return the same value that was set
+        original_extra_info = member.get("extra_information", "")
+        details_frame.extra_info_text.get.return_value = original_extra_info + "\n"
+
+        # Update details with the member
+        details_frame.update_details(member)
+
+        # Try to save with no changes
+        details_frame.save_changes()
+
+        # Verify that the no changes message was shown
+        mock_showinfo.assert_called_once_with(
+            "No Changes", "No changes were made to the member details."
+        )
+        # Verify that json.dump was not called
+        assert not mock_json_dump.called
+        # Verify that askyesno was not called
+        assert not mock_askyesno.called
+
+    @patch("tkinter.messagebox.askyesno", return_value=True)
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("json.dump")
+    def test_id_not_in_changes(
+        self, mock_json_dump, mock_file, mock_askyesno, details_frame
+    ):
+        """Test that ID is not included in change detection"""
+        # Setup initial values
+        details_frame.update_details(details_frame.family_tree.members["1"])
+
+        # Set the ID to the same value
+        details_frame.detail_vars["id"].set("1")
+        # Change another field to trigger save
+        details_frame.detail_vars["name"].set("New Name")
+
+        # Try to save
+        details_frame.save_changes()
+
+        # Verify that the confirmation dialog doesn't mention ID
+        confirm_calls = mock_askyesno.call_args_list
+        assert len(confirm_calls) == 1
+        confirm_message = confirm_calls[0][0][1]
+        assert "Id:" not in confirm_message
+        assert "Name: 'Test Person' → 'New Name'" in confirm_message
+
+    @patch("tkinter.messagebox.askyesno", return_value=True)
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("json.dump")
+    def test_extra_information_changes(
+        self, mock_json_dump, mock_file, mock_askyesno, details_frame
+    ):
+        """Test that extra information changes are properly detected"""
+        # Setup initial values
+        member = details_frame.family_tree.members["1"]
+        details_frame.update_details(member)
+
+        # Change extra information
+        details_frame.extra_info_text.get.return_value = "New extra information\n"
+
+        # Try to save
+        details_frame.save_changes()
+
+        # Verify that the confirmation dialog shows extra information change
+        confirm_calls = mock_askyesno.call_args_list
+        assert len(confirm_calls) == 1
+        confirm_message = confirm_calls[0][0][1]
+        assert (
+            "Extra Information: 'Loves testing' → 'New extra information'"
+            in confirm_message
+        )
+
+    @patch("tkinter.messagebox.askyesno", return_value=True)
+    @patch("builtins.open", new_callable=mock_open)
+    @patch("json.dump")
+    def test_empty_extra_information(
+        self, mock_json_dump, mock_file, mock_askyesno, details_frame
+    ):
+        """Test handling empty extra information"""
+        # Setup initial values with extra information
+        member = details_frame.family_tree.members["1"]
+        details_frame.update_details(member)
+
+        # Change extra information to empty
+        details_frame.extra_info_text.get.return_value = "\n"
+
+        # Try to save
+        details_frame.save_changes()
+
+        # Verify that the confirmation dialog shows removal of extra information
+        confirm_calls = mock_askyesno.call_args_list
+        assert len(confirm_calls) == 1
+        confirm_message = confirm_calls[0][0][1]
+        assert "Extra Information: Removed 'Loves testing'" in confirm_message
+
+        # Verify that the saved value is None
+        save_calls = mock_json_dump.call_args_list
+        assert len(save_calls) == 1
+        saved_data = save_calls[0][0][0]  # First argument of first call
+        assert saved_data[0]["extra_information"] is None
+
 
 class TestAddMemberDialog:
     @pytest.fixture
@@ -109,7 +256,7 @@ class TestAddMemberDialog:
             "tkinter.ttk.Button"
         ), patch("tkinter.ttk.Label"), patch("tkinter.ttk.Frame"), patch(
             "tkinter.ttk.LabelFrame"
-        ):
+        ), patch("tkinter.ttk.Style"):
             mock_family_tree = Mock()
             mock_family_tree.members = sample_family_tree
             mock_callback = Mock()
@@ -162,7 +309,9 @@ class TestFamilyTreeUI:
             "tkinter.ttk.Entry"
         ), patch("tkinter.ttk.Combobox"), patch("tkinter.ttk.Button"), patch(
             "tkinter.ttk.Label"
-        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"):
+        ), patch("tkinter.ttk.Frame"), patch("tkinter.ttk.LabelFrame"), patch(
+            "tkinter.ttk.Style"
+        ):
             ui = FamilyTreeUI(mock_family_tree)
             ui.member_listbox = mock_listbox
             return ui
