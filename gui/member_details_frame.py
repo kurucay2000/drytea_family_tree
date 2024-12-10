@@ -148,6 +148,21 @@ class MemberDetailsFrame:
         # Initially hide the save button
         self.save_changes_btn.grid_remove()
 
+    def clear_details(self):
+        """Clear all fields in the details frame"""
+        # Clear all StringVar fields
+        for var in self.detail_vars.values():
+            var.set("")
+
+        # Clear the extra information text widget
+        self.extra_info_text.delete("1.0", tk.END)
+
+        # Hide the save button since there's no member selected
+        self.save_changes_btn.grid_remove()
+
+        # Reset current member ID
+        self.current_member_id = None
+
     def update_details(self, member):
         """Update the details frame with member information"""
         # Store the original member data for accurate change detection

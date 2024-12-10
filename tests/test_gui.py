@@ -1,4 +1,5 @@
 import pytest
+import tkinter as tk
 from unittest.mock import Mock, patch, mock_open
 from gui.main_window import FamilyTreeUI
 from gui.add_member_dialog import AddMemberDialog
@@ -100,6 +101,41 @@ class TestMemberDetailsFrame:
         assert details_frame.detail_vars["age"].get() == "30"
         assert details_frame.detail_vars["gender"].get() == "Male"
         details_frame.extra_info_text.insert.assert_called_with("1.0", "Test info")
+
+    def test_clear_details(self, details_frame):
+        """Test clearing all member details"""
+        # First set some values
+        test_member = {
+            "id": "1",
+            "name": "Test Person",
+            "age": 30,
+            "gender": "Male",
+            "location": "Test City",
+            "occupation": "Tester",
+            "extra_information": "Test info",
+        }
+        details_frame.update_details(test_member)
+
+        # Reset the mock to clear the initial grid_remove call
+        details_frame.save_changes_btn.grid_remove.reset_mock()
+
+        # Now clear the details
+        details_frame.clear_details()
+
+        # Verify all StringVars are empty
+        for var in details_frame.detail_vars.values():
+            assert var.get() == "", "StringVar should be empty after clearing"
+
+        # Verify extra_info_text was cleared
+        details_frame.extra_info_text.delete.assert_called_with("1.0", tk.END)
+
+        # Verify save button was hidden
+        details_frame.save_changes_btn.grid_remove.assert_called_once()
+
+        # Verify current_member_id was reset
+        assert (
+            details_frame.current_member_id is None
+        ), "current_member_id should be None after clearing"
 
     @patch("tkinter.messagebox.askyesno", return_value=True)
     @patch("tkinter.messagebox.showinfo")
