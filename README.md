@@ -1,4 +1,4 @@
-# Drytea Family Tree Builder
+# Drytea Aile Ağacı Oluşturucu
 
 [![Unit Tests](https://github.com/IM-EB/sims_family_tree/actions/workflows/unit-tests-on-push.yml/badge.svg?branch=master)](https://github.com/IM-EB/sims_family_tree/actions/workflows/unit-tests-on-push.yml)
 
