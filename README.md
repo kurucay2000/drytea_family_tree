@@ -2,28 +2,28 @@
 
 [![Unit Tests](https://github.com/IM-EB/sims_family_tree/actions/workflows/unit-tests-on-push.yml/badge.svg?branch=master)](https://github.com/IM-EB/sims_family_tree/actions/workflows/unit-tests-on-push.yml)
 
-A Python application for creating and visualizing family trees - specifically for the Sims! Track relationships, add family members, and visualize complex family dynamics just like you would in the game.
+Aile ağaçları oluşturmak ve görselleştirmek için bir Python uygulaması - özellikle Sims'ler için! İlişkileri takip edin, aile üyeleri ekleyin ve tıpkı oyunda yaptığınız gibi karmaşık aile dinamiklerini görselleştirin.
 
-## Features
+## Özellikler
 
-- Create and manage family members with detailed information
-- Track relationships (parent, spouse, sibling, etc.)
-- Add custom details to each Sim (occupation, traits, life stage, etc.)
-- Interactive graphical user interface
-- Visual family tree representation
-- Save and load family trees
-- Export family tree visualizations as images
+- Ayrıntılı bilgilerle aile üyelerini oluşturun ve yönetin
+- İlişkileri takip edin (ebeveyn, eş, kardeş, vb.)
+- Her Drytea özel ayrıntılar ekleyin (meslek, özellikler, yaşam aşaması, vb.)
+- Etkileşimli grafiksel kullanıcı arayüzü
+- Görsel aile ağacı temsili
+- Aile ağaçlarını kaydet ve yükle
+- Aile ağacı görselleştirmelerini resim olarak dışa aktarın
 
-## Setup
+## Kurulum
 
-### Prerequisites
+### Ön Koşullar
 
 - Python 3.8+
-- uv (Python package manager)
+- uv (Python paket yöneticisi)
 
-### Installation
+### Kurulum
 
-1. Install uv if you haven't already:
+1. Eğer henüz yüklemediyseniz uv'yi yükleyin:
 ```bash
 # On macOS/Linux
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -32,42 +32,42 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-2. Clone the repository:
+2. Depoyu klonla:
 ```bash
 git clone https://github.com/yourusername/sims-family-tree-builder.git
 cd sims-family-tree-builder
 ```
 
-3. Run the application using uv:
+3. Uygulamayı uv kullanarak çalıştırın:
 ```bash
 uv run main.py
 ```
 
-## Usage
+## Kullanımı
 
-### Creating Your Family Tree
+### Aile Ağacınızı Oluşturma
 
-1. Click "Add Member" to create a new Sim
-   - Enter their name, birth date, and gender
-   - Add custom information like occupation, traits, or life stage
+1. Yeni bir Drytea oluşturmak için "Üye Ekle"ye tıklayın
+   - Adını, doğum tarihini ve cinsiyetini girin
+   - Meslek, özellikler veya yaşam aşaması gibi özel bilgiler ekleyin
 
-2. Edit metadata for your Sim(s):
-   - Add their father/mother to track family lineage
-   - Include information like their age, cause of death, or important traits
-   - The metadata will be displayed in each Sim's profile
+2. Drytea(s)inizin meta verilerini düzenleyin:
+   - Aile soyunu takip etmek için babalarını/annelerini ekleyin
+   - Yaşları, ölüm nedenleri veya önemli özellikleri gibi bilgileri ekleyin
+   - Meta veriler her Drytea profilinde gösterilecek
 
-3. View the family tree:
-   - Click "Visualize Tree" to see a graphical representation
-   - Blue nodes represent male Sims
-   - Pink nodes represent female Sims
-   - Solid lines show parent-child relationships
-   - Dashed lines show marriages/partnerships
+3. Aile ağacını görüntüle:
+   - Grafiksel bir sunum görmek için "Ağacı Görselleştir"e tıklayın
+   - Mavi düğümler erkek Drytea'leri temsil ediyor
+   - Pembe düğümler kadın Drytea'leri temsil ediyor
+   - Kesintisiz çizgiler ebeveyn-çocuk ilişkilerini gösterir
+   - Kesik çizgiler evlilikleri/ortaklıkları gösterir
 
-## Project Structure
+## Proje Yapısı
 
 TBD
 
-## Dependencies
+## Bağımlılıklar
 
 - tkinter - GUI framework
 - networkx - Graph visualization
